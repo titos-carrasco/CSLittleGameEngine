@@ -26,7 +26,7 @@ namespace test
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
                     lge.LoadImage("heroe_right", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
                     lge.LoadImage("heroe_left", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, true, false);
-                    lge.LoadTTFFont("monospace.plain", resourceDir + "/fonts/FreeMono.ttf", new FontStyle(), 16);
+                    lge.LoadTTFFont("monospace.plain", resourceDir + "/fonts/FreeMono.ttf", new FontStyle(), 12);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");

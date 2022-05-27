@@ -789,6 +789,10 @@ namespace rcr
 
             private void FlipImage(Bitmap bitmap, bool flipX, bool flipY)
             {
+                if (flipX)
+                    bitmap.RotateFlip(RotateFlipType.Rotate270FlipXY);
+                if (flipY)
+                    bitmap.RotateFlip(RotateFlipType.Rotate180FlipY);
             }
 
             public void LoadImage(String iname, String pattern, bool flipX, bool flipY)
