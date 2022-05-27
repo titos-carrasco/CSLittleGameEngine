@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace rcr
@@ -39,6 +40,7 @@ namespace rcr
 
             private readonly Dictionary<String, Bitmap[]> images;
             private readonly Dictionary<String, Font> fonts;
+            private readonly PrivateFontCollection ttfFonts;
 
             private readonly Bitmap screen;
             private readonly Color bgColor;
@@ -65,23 +67,34 @@ namespace rcr
 
                 this.bgColor = bgColor;
 
-                fonts = new Dictionary<String, Font>();
-                images = new Dictionary<String, Bitmap[]>();
+                images = new();
+                fonts = new();
+                ttfFonts = new();
 
                 keysPressed = new Dictionary<Keys, bool>();
 
-                gObjects = new Dictionary<String, GameObject>();
-                gLayers = new SortedDictionary<int, List<GameObject>>();
-                gObjectsToAdd = new List<GameObject>();
-                gObjectsToDel = new List<GameObject>();
+                gObjects = new();
+                gLayers = new();
+                gObjectsToAdd = new();
+                gObjectsToDel = new();
 
                 screen = CreateOpaqueImage(winSize.Width, winSize.Height);
-                camera = new Camera(new PointF(0, 0), winSize);
+                camera = new(new PointF(0, 0), winSize);
 
-                // resizable
+                Panel panel = new();
+                panel.Size = winSize;
+                panel.AutoSize = true;
+                panel.BackColor = Color.FromArgb(0, Color.Black);
+                panel.MouseDown += this.MousePressed;
+                panel.MouseUp += this.MouseReleased;
+                panel.Show();
+                this.Controls.Add(panel);
+
                 this.Text = title;
-                this.Size = winSize;
-                this.FormBorderStyle = FormBorderStyle.FixedSingle;
+                this.FormBorderStyle = FormBorderStyle.Fixed3D;
+                this.MaximizeBox = false;
+                this.MinimizeBox = false;
+                this.AutoSize = true;
                 this.Show();
                 this.Refresh();
             }
@@ -142,7 +155,7 @@ namespace rcr
             */
             public void Quit()
             {
-                running = false;
+                this.Invoke(() => this.Close());
             }
 
             /**
@@ -152,197 +165,220 @@ namespace rcr
             */
             public void Run(int fps)
             {
-                System.Timers.Timer timer = new System.Timers.Timer();
-                timer.Interval = 1000 / fps;
-                timer.Elapsed += Run_;
-
-                running = true;
-                timer.Start();
+                Thread thread = new( () => TRun( fps));
+                thread.Start();
                 Application.Run(this);
-                timer.Stop();
+                thread.Join();
+            }
+        
+            public void TRun(int fps)
+            {
+                Bitmap screenImage = CreateOpaqueImage(winSize.Width, winSize.Height);
+                running = true;
+                long tickExpected = 10000000 / fps;
+                long tickPrev = DateTime.Now.Ticks;
+                while (true)
+                {
+                    lock (screen)
+                    {
+                        if (!running)
+                            break;
+                    }
+
+                    // los eventos son atrapados por los listener
+
+                    // --- tiempo en ms desde el ciclo anterior
+                    long tickElapsed = DateTime.Now.Ticks - tickPrev;
+                    if (tickElapsed < tickExpected)
+                        Thread.Sleep((int)(tickExpected - tickElapsed) / 10000);
+
+                    long now = DateTime.Now.Ticks;
+                    float dt = (now - tickPrev) / 10000000.0f;
+                    tickPrev = now;
+               
+                    fpsData[fpsIdx++] = dt;
+                    fpsIdx %= fpsData.Length;
+
+                    // --- Del gobj and gobj.OnDelete
+                    List<GameObject>? ondelete = new();
+                    foreach (GameObject gobj in gObjectsToDel)
+                    {
+                        gObjects.Remove(gobj.name);
+                        gLayers[gobj.layer].Remove(gobj);
+                        if (camera.target == gobj)
+                            camera.target = null;
+                    }
+                    foreach (GameObject gobj in ondelete)
+                        gobj.OnDelete();
+                    gObjectsToDel.Clear();
+
+                    // --- Add Gobj and gobj.OnStart
+                    List<GameObject>? onstart = new();
+                    foreach (GameObject gobj in gObjectsToAdd)
+                    {
+                        int layer = gobj.layer;
+                        List<GameObject> gobjs;
+                        if (gLayers.ContainsKey(layer))
+                            gobjs = gLayers[layer];
+                        else
+                        {
+                            gobjs = new List<GameObject>();
+                            gLayers.Add(layer, gobjs);
+                        }
+                        if (!gobjs.Contains(gobj))
+                        {
+                            gobjs.Add(gobj);
+                        }
+                    }
+                    foreach (GameObject gobj in onstart)
+                        gobj.OnStart();
+                    gObjectsToAdd.Clear();
+
+                    // --- gobj.OnPreUpdate
+                    foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
+                        foreach (GameObject gobj in elem.Value)
+                            gobj.OnPreUpdate(dt);
+
+                    // --- gobj.OnUpdate
+                    foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
+                        foreach (GameObject gobj in elem.Value)
+                            gobj.OnUpdate(dt);
+
+                    // --- gobj.OnPostUpdate
+                    foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
+                        foreach (GameObject gobj in elem.Value)
+                            gobj.OnPostUpdate(dt);
+
+                    // --- game.OnMainUpdate
+                    if (onMainUpdate != null)
+                        onMainUpdate.OnMainUpdate(dt);
+
+                    // --- gobj.OnCollision
+                    Dictionary<GameObject, List<GameObject>> oncollisions = new();
+                    foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
+                    {
+                        int layer = elem.Key;
+                        if (layer != GUI_LAYER)
+                        {
+                            foreach (GameObject gobj1 in elem.Value)
+                            {
+                                if (!gobj1.callOnCollision)
+                                    continue;
+
+                                if (!gobj1.useColliders)
+                                    continue;
+
+                                List<GameObject> colliders = new();
+                                foreach (GameObject gobj2 in elem.Value)
+                                {
+                                    if (gobj1 == gobj2)
+                                        continue;
+                                    if (!gobj2.useColliders)
+                                        continue;
+                                    if (!gobj1.CollidesWith(gobj2))
+                                        continue;
+                                    colliders.Add(gobj2);
+                                }
+                                if (colliders.Count > 0)
+                                    oncollisions.Add(gobj1, colliders);
+
+                            }
+                        }
+                    }
+                    foreach (KeyValuePair<GameObject, List<GameObject>> elem in oncollisions)
+                    {
+                        GameObject gobj = elem.Key;
+                        List<GameObject> gobjs = elem.Value;
+                        gobj.OnCollision(dt, gobjs.ToArray());
+                    }
+
+                    // --- gobj.OnPreRender
+                    foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
+                        foreach (GameObject gobj in elem.Value)
+                            gobj.OnPreRender(dt);
+
+                    // --- Camera Tracking
+                    camera.FollowTarget();
+
+                    // --- Rendering
+                    Graphics g = Graphics.FromImage(screenImage);
+                    g.Clear(bgColor);
+
+                    // --- layers
+                    SolidBrush brush = new(bgColor);
+                    Pen pen = new(brush);
+                    if (collidersColor != null)
+                    {
+                        brush = new SolidBrush((Color)collidersColor);
+                        pen = new Pen(brush);
+                    }
+                    foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
+                    {
+                        int layer = elem.Key;
+                        if (layer != GUI_LAYER)
+                        {
+                            foreach (GameObject gobj in elem.Value)
+                            {
+                                if (!gobj.rect.IntersectsWith(camera.rect))
+                                    continue;
+                                PointF p = FixXY(gobj.GetPosition());
+                                Image? surface = gobj.surface;
+                                if (surface != null)
+                                    g.DrawImage(surface, new Point((int)p.X, (int)p.Y));
+
+                                if (collidersColor != null && gobj.useColliders)
+                                {
+                                    foreach (RectangleF r in gobj.GetCollider())
+                                    {
+                                        p = FixXY(new PointF(r.X, r.Y));
+                                        g.DrawRectangle(pen, new Rectangle((int)p.X, (int)p.Y, (int)r.Width - 1, (int)r.Height - 1));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    pen.Dispose();
+                    brush.Dispose();
+
+                    // --- GUI
+
+                    foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
+                    {
+                        int layer = elem.Key; ;
+                        if (layer == GUI_LAYER)
+                        {
+                            foreach (GameObject gobj in elem.Value)
+                            {
+                                Bitmap? surface = gobj.surface;
+                                if (surface != null)
+                                {
+                                    float x = gobj.rect.X;
+                                    float y = gobj.rect.Y;
+                                    g.DrawImage(surface, new Point((int)x, (int)y));
+                                }
+                            }
+                        }
+                    }
+                    g.Dispose();
+
+                    lock (screen)
+                    {
+                        g = Graphics.FromImage(screen);
+                        g.DrawImage(screenImage, new Point(0, 0));
+                        g.Dispose();
+                    }
+
+                    try
+                    {
+                        this.Invoke(() => this.Refresh());
+                    }
+                    catch (Exception e) { }
+                }
 
                 // --- gobj.OnQuit
                 foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
                     foreach (GameObject gobj in elem.Value)
                         gobj.OnQuit();
-            }
-
-            public void Run_(object? sender, EventArgs e)
-            {
-                if (!running)
-                {
-                    this.Close();
-                    this.Dispose();
-                    return;
-                }
-                float dt = 1 / 60.0f;
-
-                fpsData[fpsIdx++] = dt;
-                fpsIdx %= fpsData.Length;
-
-                // --- Del gobj and gobj.OnDelete
-                List<GameObject>? ondelete = new List<GameObject>();
-                foreach (GameObject gobj in gObjectsToDel)
-                {
-                    gObjects.Remove(gobj.name);
-                    gLayers[gobj.layer].Remove(gobj);
-                    if (camera.target == gobj)
-                        camera.target = null;
-                }
-                foreach (GameObject gobj in ondelete)
-                    gobj.OnDelete();
-                gObjectsToDel.Clear();
-
-                // --- Add Gobj and gobj.OnStart
-                List<GameObject>? onstart = new List<GameObject>();
-                foreach (GameObject gobj in gObjectsToAdd)
-                {
-                    int layer = gobj.layer;
-                    List<GameObject> gobjs;
-                    if (gLayers.ContainsKey(layer))
-                        gobjs = gLayers[layer];
-                    else
-                    {
-                        gobjs = new List<GameObject>();
-                        gLayers.Add(layer, gobjs);
-                    }
-                    if (!gobjs.Contains(gobj))
-                    {
-                        gobjs.Add(gobj);
-                    }
-                }
-                foreach (GameObject gobj in onstart)
-                    gobj.OnStart();
-                gObjectsToAdd.Clear();
-
-                // --- gobj.OnPreUpdate
-                foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
-                    foreach (GameObject gobj in elem.Value)
-                        gobj.OnPreUpdate(dt);
-
-                // --- gobj.OnUpdate
-                foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
-                    foreach (GameObject gobj in elem.Value)
-                        gobj.OnUpdate(dt);
-
-                // --- gobj.OnPostUpdate
-                foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
-                    foreach (GameObject gobj in elem.Value)
-                        gobj.OnPostUpdate(dt);
-
-                // --- game.OnMainUpdate
-                if (onMainUpdate != null)
-                    onMainUpdate.OnMainUpdate(dt);
-
-                // --- gobj.OnCollision
-                Dictionary<GameObject, List<GameObject>> oncollisions = new Dictionary<GameObject, List<GameObject>>();
-                foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
-                {
-                    int layer = elem.Key;
-                    if (layer != GUI_LAYER)
-                    {
-                        foreach (GameObject gobj1 in elem.Value)
-                        {
-                            if (!gobj1.callOnCollision)
-                                continue;
-
-                            if (!gobj1.useColliders)
-                                continue;
-
-                            List<GameObject> colliders = new List<GameObject>();
-                            foreach (GameObject gobj2 in elem.Value)
-                            {
-                                if (gobj1 == gobj2)
-                                    continue;
-                                if (!gobj2.useColliders)
-                                    continue;
-                                if (!gobj1.CollidesWith(gobj2))
-                                    continue;
-                                colliders.Add(gobj2);
-                            }
-                            if (colliders.Count > 0)
-                                oncollisions.Add(gobj1, colliders);
-
-                        }
-                    }
-                }
-                foreach (KeyValuePair<GameObject, List<GameObject>> elem in oncollisions)
-                {
-                    GameObject gobj = elem.Key;
-                    List<GameObject> gobjs = elem.Value;
-                    gobj.OnCollision(dt, gobjs.ToArray());
-                }
-
-                // --- gobj.OnPreRender
-                foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
-                    foreach (GameObject gobj in elem.Value)
-                        gobj.OnPreRender(dt);
-
-                // --- Camera Tracking
-                camera.FollowTarget();
-
-                // --- Rendering
-                Graphics g = Graphics.FromImage(screen);
-                g.Clear(bgColor);
-
-                // --- layers
-                SolidBrush brush = new SolidBrush(bgColor);
-                Pen pen = new Pen(brush);
-                if (collidersColor != null)
-                {
-                    brush = new SolidBrush((Color)collidersColor);
-                    pen = new Pen(brush);
-                }
-                foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
-                {
-                    int layer = elem.Key;
-                    if (layer != GUI_LAYER)
-                    {
-                        foreach (GameObject gobj in elem.Value)
-                        {
-                            if (!gobj.rect.IntersectsWith(camera.rect))
-                                continue;
-                            PointF p = FixXY(gobj.GetPosition());
-                            Image? surface = gobj.surface;
-                            if (surface != null)
-                                g.DrawImage(surface, new Point((int)p.X, (int)p.Y));
-
-                            if (collidersColor != null && gobj.useColliders)
-                            {
-                                foreach (RectangleF r in gobj.GetCollider())
-                                {
-                                    p = FixXY(new PointF(r.X, r.Y));
-                                    g.DrawRectangle(pen, new Rectangle((int)p.X, (int)p.Y, (int)r.Width - 1, (int)r.Height - 1));
-                                }
-                            }
-                        }
-                    }
-                }
-                pen.Dispose();
-                brush.Dispose();
-
-                // --- GUI
-
-                foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
-                {
-                    int layer = elem.Key; ;
-                    if (layer == GUI_LAYER)
-                    {
-                        foreach (GameObject gobj in elem.Value)
-                        {
-                            Bitmap? surface = gobj.surface;
-                            if (surface != null)
-                            {
-                                float x = gobj.rect.X;
-                                float y = gobj.rect.Y;
-                                g.DrawImage(surface, new Point((int)x, (int)y));
-                            }
-                        }
-                    }
-                }
-                g.Dispose();
-
-                //this.Refresh();
             }
 
             // sistema cartesiano y zona visible dada por la camara
@@ -412,7 +448,7 @@ namespace rcr
             */
             public GameObject[] FindGObjectsByTag(int layer, String tag)
             {
-                List<GameObject> gobjs = new List<GameObject>();
+                List<GameObject> gobjs = new();
 
                 foreach (GameObject o in gLayers[layer])
                     if (o.name.StartsWith(tag))
@@ -451,7 +487,7 @@ namespace rcr
             */
             public GameObject[] CollidesWith(GameObject gobj)
             {
-                List<GameObject> gobjs = new List<GameObject>();
+                List<GameObject> gobjs = new();
 
                 if (gobj.useColliders)
                     foreach (GameObject o in gLayers[gobj.layer])
@@ -589,18 +625,22 @@ namespace rcr
             */
             public Point GetMousePosition()
             {
-                Point p = Cursor.Position;
+                Point p = new Point(0, 0);
+                try
+                {
+                    p = this.Invoke(() => PointToClient(Cursor.Position));
 
-                if (p.X < 0)
-                    p.X = 0;
-                else if (p.X >= this.winSize.Width)
-                    p.X = this.winSize.Width - 1;
+                    if (p.X < 0)
+                        p.X = 0;
+                    else if (p.X >= this.winSize.Width)
+                        p.X = this.winSize.Width - 1;
 
-                if (p.Y < 0)
-                    p.Y = 0;
-                else if (p.Y >= this.winSize.Height)
-                    p.Y = this.winSize.Height - 1;
+                    if (p.Y < 0)
+                        p.Y = 0;
+                    else if (p.Y >= this.winSize.Height)
+                        p.Y = this.winSize.Height - 1;
 
+                } catch(Exception) { }
                 return p;
             }
 
@@ -625,14 +665,16 @@ namespace rcr
             {
                 lock (mouseClicks)
                 {
-                    //mouseClicks[((short)e.Button) - 1] = new Point(e.X, e.Y);
+                    int idx = e.Button.Equals(MouseButtons.Left) ? 0 : e.Button.Equals(MouseButtons.Middle) ? 1 : 2;
+                    mouseClicks[idx] = new Point(e.X, e.Y);
                 }
             }
             public void MousePressed(Object? sender, MouseEventArgs e)
             {
                 lock (mouseButtons)
                 {
-                    //mouseButtons[((short)e.Button) - 1] = true;
+                    int idx = e.Button.Equals(MouseButtons.Left) ? 0 : e.Button.Equals(MouseButtons.Middle) ? 1 : 2;
+                    mouseButtons[idx] = true;
                 }
             }
 
@@ -640,7 +682,8 @@ namespace rcr
             {
                 lock (mouseButtons)
                 {
-                    //mouseButtons[((short)e.Button) - 1] = false;
+                    int idx = e.Button.Equals(MouseButtons.Left) ? 0 : e.Button.Equals(MouseButtons.Middle) ? 1 : 2;
+                    mouseButtons[idx] = false;
                 }
             }
 
@@ -652,8 +695,8 @@ namespace rcr
             */
             static public String[] GetSysFonts()
             {
-                List<String> sysfonts = new List<String>();
-                InstalledFontCollection ifc = new InstalledFontCollection();
+                List<String> sysfonts = new();
+                InstalledFontCollection ifc = new();
                 foreach (FontFamily fa in ifc.Families)
                     sysfonts.Add(fa.Name);
                 ifc.Dispose();
@@ -671,7 +714,8 @@ namespace rcr
             public void LoadSysFont(String name, String fname, FontStyle fstyle, int fsize)
             {
                 Font? font = SystemFonts.GetFontByName(fname);
-                if (font == null) return;
+                if (font == null) throw new ArgumentException();
+
                 fonts.Add(name, font);
             }
 
@@ -685,10 +729,11 @@ namespace rcr
             */
             public void LoadTTFFont(String name, String fname, FontStyle fstyle, int fsize)
             {
-                PrivateFontCollection pfc = new PrivateFontCollection();
-                pfc.AddFontFile(fname);
-                Font font = new Font(pfc.Families[0], fsize, fstyle);
+                ttfFonts.AddFontFile(fname);
+                FontFamily fontFamily = new FontFamily(ttfFonts.Families[ttfFonts.Families.Length-1].Name, ttfFonts);
+                Font font = new Font(fontFamily, fsize);
                 fonts.Add(name, font);
+                System.GC.Collect();
             }
 
             /**
@@ -763,7 +808,7 @@ namespace rcr
                 for (int i = 0; i < nimages; i++)
                 {
                     Bitmap b = bitmaps[i];
-                    Bitmap bmp = new Bitmap(size.Width, size.Height);
+                    Bitmap bmp = new(size.Width, size.Height);
 
                     Graphics g = Graphics.FromImage(bmp);
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -784,7 +829,7 @@ namespace rcr
                     Bitmap b = bitmaps[i];
                     int width = (int)Math.Round(b.Width * scale);
                     int height = (int)Math.Round(b.Height * scale);
-                    Bitmap bmp = new Bitmap(width, height);
+                    Bitmap bmp = new(width, height);
 
                     Graphics g = Graphics.FromImage(bmp);
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -808,18 +853,18 @@ namespace rcr
             {
                 String? dir = Path.GetDirectoryName(pattern);
                 String patt = Path.GetFileName(pattern);
-                List<Bitmap> bitmaps = new List<Bitmap>();
+                List<Bitmap> bitmaps = new();
 
                 if (dir == null)
                 {
-                    Bitmap bmp = new Bitmap(Image.FromFile(patt));
+                    Bitmap bmp = new(Image.FromFile(patt));
                     bitmaps.Add(bmp);
                 }
                 else
                 {
                     foreach (String fname in Directory.EnumerateFiles(dir, patt))
                     {
-                        Bitmap bmp = new Bitmap(Image.FromFile(fname));
+                        Bitmap bmp = new(Image.FromFile(fname));
                         bitmaps.Add(bmp);
                     }
                 }
@@ -829,15 +874,21 @@ namespace rcr
             // ------ FORM ------
             protected override void OnPaintBackground(PaintEventArgs e)
             {
-                Graphics g = e.Graphics;
-                g.DrawImage(screen, new Point(0, 0));
-                g.Dispose();
+                lock (screen)
+                {
+                    Graphics g = e.Graphics;
+                    g.DrawImage(screen, new Point(0, 0));
+                    g.Dispose();
+                }
             }
 
             protected override void OnFormClosing(FormClosingEventArgs e)
             {
+                lock (screen)
+                {
+                    running = false;
+                }
                 base.OnFormClosing(e);
-                running = false;
             }
 
         }

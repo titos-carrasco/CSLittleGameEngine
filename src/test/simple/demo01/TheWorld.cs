@@ -27,8 +27,8 @@ namespace test
 
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
                     lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
-                    lge.LoadTTFFont("backlash.plain.40", resourceDir + "/fonts/backlash.ttf", new FontStyle(), 40);
-                    lge.LoadTTFFont("monospace.plain.16", resourceDir + "/fonts/FreeMono.ttf", new FontStyle(), 16);
+                    lge.LoadTTFFont("backlash.plain", resourceDir + "/fonts/backlash.ttf", new FontStyle(), 30);
+                    lge.LoadTTFFont("monospace.plain", resourceDir + "/fonts/FreeMono.ttf", new FontStyle(), 12);
 
                     // agregamos el fondo
                     Sprite fondo = new("fondo", new PointF(0, 0));
@@ -45,7 +45,7 @@ namespace test
 
                     // agregamos un texto con transparencia
                     Canvas canvas = new(new PointF(200, 110), new Size(400, 200));
-                    canvas.DrawText("Little Game Engine", new PointF(30, 90), "backlash.plain.40", Color.FromArgb(255,20, 20, 20));
+                    canvas.DrawText("Little Game Engine", new PointF(30, 90), "backlash.plain", Color.FromArgb(255,20, 20, 20));
                     lge.AddGObjectGUI(canvas);
                 }
 
@@ -59,7 +59,7 @@ namespace test
                     Point mousePosition = lge.GetMousePosition();
                     bool[] mouseButtons = lge.GetMouseButtons();
 
-                    String info = String.Format("FPS: {0} - gObjs: {1} - Mouse: ({2},{3}) ({4},{5},{6})", 
+                    String info = String.Format("FPS: {0,-6:f} - gObjs: {1} - Mouse: ({2},{3}) ({4},{5},{6})", 
                                                 lge.GetFPS(),
                                                 lge.GetCountGObjects(), 
                                                 mousePosition.X, mousePosition.Y, 
@@ -69,7 +69,7 @@ namespace test
                                         );
                     Canvas infobar = (Canvas)lge.GetGObject("infobar");
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
-                    infobar.DrawText(info, new PointF(140, 16), "monospace.plain.16", Color.Black);
+                    infobar.DrawText(info, new PointF(140, 0), "monospace.plain", Color.Black);
 
                     // animamos al heroe
                     Sprite heroe = (Sprite)lge.GetGObject("Heroe");

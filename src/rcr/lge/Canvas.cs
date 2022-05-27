@@ -71,7 +71,7 @@ namespace rcr
                 Graphics g = Graphics.FromImage(surface!);
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 Font f = lge.GetFont(fname);
-                SolidBrush brush = new SolidBrush(color);
+                SolidBrush brush = new(color);
                 g.DrawString(text, f, brush, new Point(x, y));
                 brush.Dispose();
                 g.Dispose();
