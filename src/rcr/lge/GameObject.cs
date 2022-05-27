@@ -290,7 +290,7 @@ namespace rcr
             * Es invocada en el siguiente ciclo para todos los
             * GameObjects marcados para eliminacion
             */
-            public void OnDelete()
+            virtual public void OnDelete()
             {
             }
 
@@ -298,7 +298,7 @@ namespace rcr
             * Es invocada en el siguiente ciclo para todos los
             * GameObjects recien creados
             */
-            public void OnStart()
+            virtual public void OnStart()
             {
             }
 
@@ -308,7 +308,7 @@ namespace rcr
             *
             * @param dt tiempo en segundos desde el ultimo ciclo
             */
-            public void OnPreUpdate(float dt)
+            virtual public void OnPreUpdate(float dt)
             {
             }
 
@@ -318,7 +318,7 @@ namespace rcr
             *
             * @param dt tiempo en segundos desde el ultimo ciclo
             */
-            public void OnUpdate(float dt)
+            virtual public void OnUpdate(float dt)
             {
             }
 
@@ -328,7 +328,7 @@ namespace rcr
             *
             * @param dt tiempo en segundos desde el ultimo ciclo
             */
-            public void OnPostUpdate(float dt)
+            virtual public void OnPostUpdate(float dt)
             {
             }
 
@@ -339,7 +339,7 @@ namespace rcr
             * @param dt tiempo en segundos desde el ultimo ciclo
             * @param gobjs los GameObjects que colisionan co este GameObject
             */
-            public void OnCollision(float dt, GameObject[] gobjs)
+            virtual public void OnCollision(float dt, GameObject[] gobjs)
             {
             }
 
@@ -349,7 +349,7 @@ namespace rcr
             *
             * @param dt tiempo en segundos desde el ultimo ciclo
             */
-            public void OnPreRender(float dt)
+            virtual public void OnPreRender(float dt)
             {
             }
 
@@ -357,7 +357,7 @@ namespace rcr
             * Es invocadapara todos los GameObjects jusrto antes de
             * finalizar el game loop
             */
-            public void OnQuit()
+            virtual public void OnQuit()
             {
             }
 

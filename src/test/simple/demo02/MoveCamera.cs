@@ -7,46 +7,50 @@ namespace test
 {
     namespace simple
     {
-        namespace demo01
+        namespace demo02
         {
-            public class TheWorld : IEvents
+            public class MoveCamera : IEvents
             {
                 private readonly LittleGameEngine lge;
 
-                public TheWorld()
+                public MoveCamera()
                 {
                     // creamos el juego
-                    Size winSize = new(800, 440);
+                    Size winSize = new Size(640, 480);
 
-                    lge = new LittleGameEngine(winSize, "The World", Color.White);
+                    lge = new LittleGameEngine(winSize, "Move Camera", Color.White);
                     lge.SetOnMainUpdate(this);
-                    //lge.ShowColliders(Color.Red);
 
                     // cargamos los recursos que usaremos
                     String resourceDir = @"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources";
 
-                    lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
-                    lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
-                    lge.LoadTTFFont("backlash.plain", resourceDir + "/fonts/backlash.ttf", new FontStyle(), 30);
+                    lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
+                    lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
+                    lge.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
                     lge.LoadTTFFont("monospace.plain", resourceDir + "/fonts/FreeMono.ttf", new FontStyle(), 12);
 
                     // agregamos el fondo
-                    Sprite fondo = new("fondo", new PointF(0, 0));
+                    Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
                     lge.AddGObject(fondo, 0);
 
                     // agregamos la barra de info
-                    Canvas infobar = new(new PointF(0, 0), new Size(800, 20), "infobar");
+                    Canvas infobar = new Canvas(new PointF(0, 0), new Size(640, 20), "infobar");
                     lge.AddGObjectGUI(infobar);
 
                     // agregamos al heroe
-                    Sprite heroe = new("heroe", new PointF(226, 254), "Heroe");
-                    //heroe.EnableCollider(true);
+                    Sprite heroe = new Sprite("heroe", new PointF(550, 626), "Heroe");
                     lge.AddGObject(heroe, 1);
 
-                    // agregamos un texto con transparencia
-                    Canvas canvas = new(new PointF(200, 110), new Size(400, 200));
-                    canvas.DrawText("Little Game Engine", new PointF(30, 90), "backlash.plain", Color.FromArgb(255,20, 20, 20));
-                    lge.AddGObjectGUI(canvas);
+                    // # configuramos la camara
+                    lge.SetCameraBounds(new Rectangle(0, 0, 1920, 1056));
+
+                    // posicionamos la camara
+                    PointF heroePosition = heroe.GetPosition();
+                    SizeF heroeSize = heroe.GetSize();
+                    SizeF cameraSize = lge.GetCameraSize();
+                    float x = heroePosition.X + heroeSize.Width / 2 - cameraSize.Width / 2;
+                    float y = heroePosition.Y + heroeSize.Height / 2 - cameraSize.Height / 2;
+                    lge.SetCameraPosition(new PointF(x, y));
                 }
 
                 public void OnMainUpdate(float dt)
@@ -71,9 +75,26 @@ namespace test
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
                     infobar.DrawText(info, new PointF(140, 0), "monospace.plain", Color.Black);
 
-                    // animamos al heroe
-                    Sprite heroe = (Sprite)lge.GetGObject("Heroe");
-                    heroe.NextImage(dt, 0.060f);
+                    // velocity = pixeles por segundo
+                    float velocity = 240;
+                    float pixels = velocity * dt;
+
+                    // la posiciona actual de la camara
+                    PointF cameraPosition = lge.GetCameraPosition();
+
+                    // cambiamos sus coordenadas segun la tecla presionada
+                    if (lge.KeyPressed(Keys.Right))
+                        cameraPosition.X = cameraPosition.X + pixels;
+                    else if (lge.KeyPressed(Keys.Left))
+                        cameraPosition.X = cameraPosition.X - pixels;
+
+                    if (lge.KeyPressed(Keys.Up))
+                        cameraPosition.Y = cameraPosition.Y - pixels;
+                    else if (lge.KeyPressed(Keys.Down))
+                        cameraPosition.Y = cameraPosition.Y + pixels;
+
+                    // posicionamos la camara
+                    lge.SetCameraPosition(cameraPosition);
                 }
 
                 // main loop
@@ -85,7 +106,7 @@ namespace test
                 // show time
                 public static void Main()
                 {
-                    TheWorld game = new();
+                    MoveCamera game = new();
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");
                 }

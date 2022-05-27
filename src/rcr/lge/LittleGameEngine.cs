@@ -560,7 +560,7 @@ namespace rcr
             *
             * @param position la posicion
             */
-            public void SetCameraPosition(Point position)
+            public void SetCameraPosition(PointF position)
             {
                 camera.SetPosition(position);
             }
