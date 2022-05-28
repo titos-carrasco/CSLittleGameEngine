@@ -25,7 +25,8 @@ namespace test
                     SetBounds(new Rectangle(0, 0, 1920, 1056));
                 }
 
-                public override void OnUpdate(float dt) {
+                public override void OnUpdate(float dt)
+                {
                     // velocity = pixeles por segundo
                     float velocity = 240;
                     float pixels = velocity * dt;
@@ -35,25 +36,36 @@ namespace test
                     float y = GetY();
 
                     // cambiamos sus coordenadas, orientacion e imagen segun la tecla presionada
-                    if (lge.KeyPressed(Keys.Right)) {
+                    if (lge.KeyPressed(Keys.Right))
+                    {
                         x = x + pixels;
-                        if (state != 2) {
+                        if (state != 2)
+                        {
                             SetImage("heroe_run_right");
                             state = 2;
                         }
-                    } else if (lge.KeyPressed(Keys.Left)) {
+                    }
+                    else if (lge.KeyPressed(Keys.Left))
+                    {
                         x = x - pixels;
-                        if (state != -2) {
+                        if (state != -2)
+                        {
                             SetImage("heroe_run_left");
                             state = -2;
                         }
-                    } else if (state == 2) {
-                        if (state != 1) {
+                    }
+                    else if (state == 2)
+                    {
+                        if (state != 1)
+                        {
                             SetImage("heroe_idle_right");
                             state = 1;
                         }
-                    } else if (state == -2) {
-                        if (state != -1) {
+                    }
+                    else if (state == -2)
+                    {
+                        if (state != -1)
+                        {
                             SetImage("heroe_idle_left");
                             state = -1;
                         }

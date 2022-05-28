@@ -9,7 +9,8 @@ namespace test
     {
         namespace demo03
         {
-            public class MovePlayer : IEvents {
+            public class MovePlayer : IEvents
+            {
                 private readonly LittleGameEngine lge;
 
                 public MovePlayer()
@@ -17,7 +18,7 @@ namespace test
                     // creamos el juego
                     Size winSize = new Size(640, 480);
 
-                    lge = new LittleGameEngine(winSize, "Move Camera", Color.White);
+                    lge = new LittleGameEngine(winSize, "Move Player", Color.White);
                     lge.SetOnMainUpdate(this);
 
                     // cargamos los recursos que usaremos
@@ -26,7 +27,7 @@ namespace test
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
                     lge.LoadImage("heroe_right", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
                     lge.LoadImage("heroe_left", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, true, false);
-                    lge.LoadTTFont("monospace.plain", resourceDir + "/fonts/FreeMono.ttf", new FontStyle(), 12);
+                    lge.LoadSysFont("monospace", "FreeMono", FontStyle.Regular, 12);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -47,7 +48,8 @@ namespace test
                     lge.SetCameraTarget(heroe, true);
                 }
 
-                public void OnMainUpdate(float dt) {
+                public void OnMainUpdate(float dt)
+                {
                     // abortamos con la tecla Escape
                     if (lge.KeyPressed(Keys.Escape))
                         lge.Quit();
@@ -66,7 +68,7 @@ namespace test
                                         );
                     Canvas infobar = (Canvas)lge.GetGObject("infobar");
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
-                    infobar.DrawText(info, new PointF(140, 0), "monospace.plain", Color.Black);
+                    infobar.DrawText(info, new PointF(100, 0), "monospace", Color.Black);
                 }
 
                 // main loop

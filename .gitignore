@@ -135,3 +135,5 @@ _NCrunch*
 .vs/
 .vscode/
 *.sln
+*.exe
+*.dll

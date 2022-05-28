@@ -27,7 +27,7 @@ namespace test
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
                     lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
                     lge.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
-                    lge.LoadTTFont("monospace.plain", resourceDir + "/fonts/FreeMono.ttf", new FontStyle(), 12);
+                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -73,7 +73,7 @@ namespace test
                                         );
                     Canvas infobar = (Canvas)lge.GetGObject("infobar");
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
-                    infobar.DrawText(info, new PointF(140, 0), "monospace.plain", Color.Black);
+                    infobar.DrawText(info, new PointF(100, 0), "monospace", Color.Black);
 
                     // velocity = pixeles por segundo
                     float velocity = 240;

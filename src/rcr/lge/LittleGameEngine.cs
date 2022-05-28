@@ -73,13 +73,17 @@ namespace rcr
 
                 keysPressed = new Dictionary<Keys, bool>();
 
-                gObjects = new Dictionary<String, GameObject> ();
+                gObjects = new Dictionary<String, GameObject>();
                 gLayers = new SortedDictionary<int, List<GameObject>>();
                 gObjectsToAdd = new List<GameObject>();
                 gObjectsToDel = new List<GameObject>();
 
-                screen = CreateOpaqueImage(winSize.Width, winSize.Height);
                 camera = new Camera(new PointF(0, 0), winSize);
+
+                screen = CreateOpaqueImage(winSize.Width, winSize.Height);
+                Graphics g = Graphics.FromImage(screen);
+                g.Clear(bgColor);
+                g.Dispose();
 
                 Panel panel = new Panel();
                 panel.Size = winSize;
@@ -96,7 +100,8 @@ namespace rcr
                 this.MinimizeBox = false;
                 this.AutoSize = true;
                 this.Show();
-                this.Refresh();
+
+                Application.DoEvents();
             }
 
             /**
@@ -107,7 +112,7 @@ namespace rcr
             */
             public static LittleGameEngine GetInstance()
             {
-                if(lge == null )
+                if (lge == null)
                     throw new ApplicationException("LGE no se encuentra activo");
                 return lge;
             }
@@ -157,9 +162,10 @@ namespace rcr
             */
             public void Quit()
             {
-                this.Invoke(
-                    new Action(() => this.Close() )
-                );
+                lock (this)
+                {
+                    running = false;
+                }
             }
 
             /**
@@ -169,7 +175,7 @@ namespace rcr
             */
             public void Run(int fps)
             {
-                Thread thread = new Thread( () => TRun( fps));
+                Thread thread = new Thread(() => TRun(fps));
                 thread.Start();
                 Application.Run(this);
                 thread.Join();
@@ -183,7 +189,7 @@ namespace rcr
                 long tickPrev = DateTime.Now.Ticks;
                 while (true)
                 {
-                    lock (screen)
+                    lock (this)
                     {
                         if (!running)
                             break;
@@ -309,7 +315,7 @@ namespace rcr
                     g.Clear(bgColor);
 
                     // --- layers
-                    SolidBrush brush = new SolidBrush( bgColor);
+                    SolidBrush brush = new SolidBrush(bgColor);
                     Pen pen = new Pen(brush);
                     if (collidersColor != null)
                     {
@@ -375,16 +381,20 @@ namespace rcr
                     try
                     {
                         this.Invoke(
-                            new Action(() => this.Refresh() )
+                            new Action(() => this.Refresh())
                         );
                     }
-                    catch (Exception e) { }
+                    catch (Exception) { }
                 }
 
                 // --- gobj.OnQuit
                 foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
                     foreach (GameObject gobj in elem.Value)
                         gobj.OnQuit();
+
+                // cerramos la ventana en caso de que siga abierta
+                this.Close();
+                this.Dispose();
             }
 
             // sistema cartesiano y zona visible dada por la camara
@@ -631,24 +641,14 @@ namespace rcr
             */
             public Point GetMousePosition()
             {
-                Point p = new Point(0, 0);
-                try
+                Point p = this.PointToClient(Cursor.Position);
+
+                if (p.X < 0 || p.X >= this.winSize.Width || p.Y < 0 || p.Y >= this.winSize.Height)
                 {
-                    p = (Point)this.Invoke(
-                            new Action(() => this.PointToClient(Cursor.Position) )
-                        );
+                    p.X = -1;
+                    p.Y = -1;
+                }
 
-                    if (p.X < 0)
-                        p.X = 0;
-                    else if (p.X >= this.winSize.Width)
-                        p.X = this.winSize.Width - 1;
-
-                    if (p.Y < 0)
-                        p.Y = 0;
-                    else if (p.Y >= this.winSize.Height)
-                        p.Y = this.winSize.Height - 1;
-
-                } catch(Exception) { }
                 return p;
             }
 
@@ -721,9 +721,8 @@ namespace rcr
             */
             public void LoadSysFont(String name, String fname, FontStyle fstyle, int fsize)
             {
-                Font font = SystemFonts.GetFontByName(fname);
-                if (font == null) throw new ArgumentException();
-
+                FontFamily fontFamily = new FontFamily(fname);
+                Font font = new Font(fontFamily, fsize, fstyle);
                 fonts.Add(name, font);
             }
 
@@ -738,10 +737,9 @@ namespace rcr
             public void LoadTTFont(String name, String fname, FontStyle fstyle, int fsize)
             {
                 ttfFonts.AddFontFile(fname);
-                FontFamily fontFamily = new FontFamily(ttfFonts.Families[ttfFonts.Families.Length-1].Name, ttfFonts);
-                Font font = new Font(fontFamily, fsize);
+                FontFamily fontFamily = new FontFamily(ttfFonts.Families[ttfFonts.Families.Length - 1].Name, ttfFonts);
+                Font font = new Font(fontFamily, fsize, fstyle);
                 fonts.Add(name, font);
-                System.GC.Collect();
             }
 
             /**
@@ -797,11 +795,16 @@ namespace rcr
 
             private void FlipImage(Bitmap bitmap, bool flipX, bool flipY)
             {
-                Console.WriteLine( "{0} {1}", flipX, flipY);
-                if (flipX)
-                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-                if (flipY)
+                if (flipX && flipY)
                     bitmap.RotateFlip(RotateFlipType.RotateNoneFlipXY);
+                else if (flipX){
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                }
+                else if (flipY){
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipY);
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                }
             }
 
             public void LoadImage(String iname, String pattern, bool flipX, bool flipY)
@@ -837,7 +840,7 @@ namespace rcr
             {
                 List<Bitmap> bitmaps = ReadImages(pattern);
                 int nimages = bitmaps.Count;
-                for(int i=0; i<nimages; i++ )
+                for (int i = 0; i < nimages; i++)
                 {
                     Bitmap b = bitmaps[i];
                     int width = (int)Math.Round(b.Width * scale);
@@ -892,6 +895,7 @@ namespace rcr
                 lock (screen)
                 {
                     Graphics g = e.Graphics;
+                    g.Clear(Color.White);
                     g.DrawImage(screen, new Point(0, 0));
                     //g.Dispose();
                 }
@@ -899,11 +903,13 @@ namespace rcr
 
             protected override void OnFormClosing(FormClosingEventArgs e)
             {
-                lock (screen)
+                e.Cancel = false;
+                base.OnFormClosing(e);
+
+                lock (this)
                 {
                     running = false;
                 }
-                base.OnFormClosing(e);
             }
 
         }

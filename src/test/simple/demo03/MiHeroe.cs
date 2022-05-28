@@ -13,7 +13,7 @@ namespace test
             {
                 private readonly LittleGameEngine lge;
 
-                public MiHeroe(): 
+                public MiHeroe() :
                     base("heroe_right", new PointF(550, 626), "Heroe")
                 {
                     // acceso al motor de juegos
@@ -23,7 +23,8 @@ namespace test
                     SetBounds(new Rectangle(0, 0, 1920, 1056));
                 }
 
-                public override void OnUpdate(float dt) {
+                public override void OnUpdate(float dt)
+                {
                     // velocity = pixeles por segundo
                     float velocity = 240;
                     float pixels = velocity * dt;
@@ -33,10 +34,13 @@ namespace test
                     float y = GetY();
 
                     // cambiamos sus coordenadas segun la tecla presionada
-                    if (lge.KeyPressed(Keys.Right)) {
+                    if (lge.KeyPressed(Keys.Right))
+                    {
                         x = x + pixels;
                         SetImage("heroe_right");
-                    } else if (lge.KeyPressed(Keys.Left)) {
+                    }
+                    else if (lge.KeyPressed(Keys.Left))
+                    {
                         x = x - pixels;
                         SetImage("heroe_left");
                     }
@@ -53,4 +57,3 @@ namespace test
         }
     }
 }
-

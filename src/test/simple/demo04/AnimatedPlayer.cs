@@ -13,11 +13,12 @@ namespace test
             {
                 private readonly LittleGameEngine lge;
 
-                public AnimatedPlayer() {
+                public AnimatedPlayer()
+                {
                     // creamos el juego
                     Size winSize = new Size(640, 480);
 
-                    lge = new LittleGameEngine(winSize, "Move Camera", Color.White);
+                    lge = new LittleGameEngine(winSize, "Animated Player", Color.White);
                     lge.SetOnMainUpdate(this);
 
                     // cargamos los recursos que usaremos
@@ -29,7 +30,7 @@ namespace test
                     lge.LoadImage("heroe_run_right", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, false, false);
                     lge.LoadImage("heroe_run_left", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, true, false);
                     lge.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
-                    lge.LoadTTFont("monospace.plain", resourceDir + "/fonts/FreeMono.ttf", new FontStyle(), 12);
+                    lge.LoadSysFont("monospace", "FreeMono", FontStyle.Regular, 12);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -50,7 +51,8 @@ namespace test
                     lge.SetCameraTarget(heroe, false);
                 }
 
-                public void OnMainUpdate(float dt) {
+                public void OnMainUpdate(float dt)
+                {
                     // abortamos con la tecla Escape
                     if (lge.KeyPressed(Keys.Escape))
                         lge.Quit();
@@ -69,7 +71,7 @@ namespace test
                                         );
                     Canvas infobar = (Canvas)lge.GetGObject("infobar");
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
-                    infobar.DrawText(info, new PointF(140, 0), "monospace.plain", Color.Black);
+                    infobar.DrawText(info, new PointF(100, 0), "monospace", Color.Black);
                 }
 
                 // main loop

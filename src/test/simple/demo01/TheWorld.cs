@@ -27,8 +27,8 @@ namespace test
 
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
                     lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
-                    lge.LoadTTFont("backlash.plain", resourceDir + "/fonts/backlash.ttf", new FontStyle(), 30);
-                    lge.LoadTTFont("monospace.plain", resourceDir + "/fonts/FreeMono.ttf", new FontStyle(), 12);
+                    lge.LoadSysFont("banner", "Comic Sans MS", FontStyle.Regular, 30);
+                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0));
@@ -45,7 +45,7 @@ namespace test
 
                     // agregamos un texto con transparencia
                     Canvas canvas = new Canvas(new PointF(200, 110), new Size(400, 200));
-                    canvas.DrawText("Little Game Engine", new PointF(30, 90), "backlash.plain", Color.FromArgb(255,20, 20, 20));
+                    canvas.DrawText("Little Game Engine", new PointF(30, 90), "banner", Color.FromArgb(255, 20, 20, 20));
                     lge.AddGObjectGUI(canvas);
                 }
 
@@ -69,7 +69,7 @@ namespace test
                                         );
                     Canvas infobar = (Canvas)lge.GetGObject("infobar");
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
-                    infobar.DrawText(info, new PointF(140, 0), "monospace.plain", Color.Black);
+                    infobar.DrawText(info, new PointF(140, 0), "monospace", Color.Black);
 
                     // animamos al heroe
                     Sprite heroe = (Sprite)lge.GetGObject("Heroe");

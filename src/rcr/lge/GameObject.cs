@@ -262,7 +262,7 @@ namespace rcr
             * @param useColliders si es verdadero participara del procesamiento de
             *                     colisiones
             */
-            public void EnableCollider(bool useColliders, bool oncollision=false)
+            public void EnableCollider(bool useColliders, bool oncollision = false)
             {
                 this.useColliders = useColliders;
                 this.callOnCollision = oncollision;
@@ -354,7 +354,7 @@ namespace rcr
             }
 
             /**
-            * Es invocadapara todos los GameObjects jusrto antes de
+            * Es invocada para todos los GameObjects justo antes de
             * finalizar el game loop
             */
             virtual public void OnQuit()
