@@ -16,7 +16,7 @@ namespace rcr
             *
             * @param dt tiempo en segundos desde el ultimo ciclo del main loop
             */
-            public void OnMainUpdate(float dt);
+            void OnMainUpdate(float dt);
         }
     }
 }

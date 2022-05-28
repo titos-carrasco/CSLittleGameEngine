@@ -12,7 +12,7 @@ namespace rcr
         */
         public class Camera : GameObject
         {
-            protected internal GameObject? target;
+            protected internal GameObject target;
             protected internal bool targetInCenter;
 
             /**

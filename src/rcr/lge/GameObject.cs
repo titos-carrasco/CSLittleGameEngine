@@ -15,8 +15,8 @@ namespace rcr
             protected internal RectangleF rect;
             protected internal RectangleF[] collider = { };
             protected internal String name;
-            protected internal Bitmap? surface = null;
-            protected internal RectangleF? bounds = null;
+            protected internal Bitmap surface = null;
+            protected internal Nullable<RectangleF> bounds = null;
             protected internal String tag = "";
             protected internal bool useColliders = false;
             protected internal bool callOnCollision = false;
@@ -29,7 +29,7 @@ namespace rcr
             * @param size   dimension (ancho,alto) del GameObject
             * @param name   nombre unico para este GameObject
             */
-            public GameObject(PointF origin, SizeF size, String? name) :
+            public GameObject(PointF origin, SizeF size, String name) :
                 this(origin.X, origin.Y, size.Width, size.Height, name)
             { }
 
@@ -42,7 +42,7 @@ namespace rcr
             * @param Height alto del GameObject
             * @param name   nombre unico para este GameObject
             */
-            public GameObject(float x, float y, float width, float height, String? name)
+            public GameObject(float x, float y, float width, float height, String name)
             {
                 rect = new RectangleF(x, y, width, height);
                 if (name == null)
@@ -227,7 +227,7 @@ namespace rcr
             */
             public void SetTag(String tag)
             {
-                this.tag = new String(tag);
+                this.tag = String.Copy(tag);
             }
 
             /**

@@ -1,4 +1,13 @@
 # Changelog
 
+## 2022-05-28
+- Se lleva todo a SDK4.5 y C# v6
+- 4 demos operativos
+- Compila y ejecuta en Linux Debian (Mono y DotNet) y Windows
+- Problemas detectados:
+    - Los Textos no se visualizan, sólo aparecen restángulos
+    - Las opciones Flip de las imágenes no están funcionando
+    - En la ventana principal quedan unos bordes que no se refrescan
+
 ## 2022-05-26
 - Conversión desde Java

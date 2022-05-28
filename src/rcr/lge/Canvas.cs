@@ -32,7 +32,7 @@ namespace rcr
             * @param size   dimension (width, height) del canvas
             * @param name   nombre para esta GameObject
             */
-            public Canvas(PointF origin, SizeF size, String? name) :
+            public Canvas(PointF origin, SizeF size, String name) :
                 base(origin, size, name)
             {
                 surface = LittleGameEngine.CreateTranslucentImage((int)size.Width, (int)size.Height);
@@ -45,7 +45,7 @@ namespace rcr
             */
             public void Fill(Color color)
             {
-                Graphics g = Graphics.FromImage(surface!);
+                Graphics g = Graphics.FromImage(surface);
                 g.Clear(color);
                 g.Dispose();
             }
@@ -68,10 +68,10 @@ namespace rcr
 
                 int x = (int)position.X;
                 int y = (int)position.Y;
-                Graphics g = Graphics.FromImage(surface!);
+                Graphics g = Graphics.FromImage(surface);
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 Font f = lge.GetFont(fname);
-                SolidBrush brush = new(color);
+                SolidBrush brush = new SolidBrush(color);
                 g.DrawString(text, f, brush, new Point(x, y));
                 brush.Dispose();
                 g.Dispose();
@@ -89,7 +89,7 @@ namespace rcr
                 int x = (int)position.X;
                 int y = (int)position.Y;
 
-                Graphics g = Graphics.FromImage(surface!);
+                Graphics g = Graphics.FromImage(surface);
                 SolidBrush brush = new SolidBrush(color);
                 Pen pen = new Pen(brush);
                 g.DrawLine(pen, new Point(x, y), new Point(x, y));
@@ -114,7 +114,7 @@ namespace rcr
                 int w = (int)radius;
                 int h = w;
 
-                Graphics g = Graphics.FromImage(surface!);
+                Graphics g = Graphics.FromImage(surface);
                 SolidBrush brush = new SolidBrush(color);
                 Pen pen = new Pen(brush);
                 if (thickness)
@@ -143,7 +143,7 @@ namespace rcr
                 int w = (int)size.Width;
                 int h = (int)size.Height;
 
-                Graphics g = Graphics.FromImage(surface!);
+                Graphics g = Graphics.FromImage(surface);
                 SolidBrush brush = new SolidBrush(color);
                 Pen pen = new Pen(brush);
                 if (thickness)
@@ -168,7 +168,7 @@ namespace rcr
                 int y = (int)position.Y;
 
                 Graphics g = Graphics.FromImage(surface);
-                g.DrawImage(this.surface!, new Point(x, y));
+                g.DrawImage(this.surface, new Point(x, y));
                 g.Dispose();
             }
 

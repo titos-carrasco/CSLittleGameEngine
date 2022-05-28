@@ -13,7 +13,7 @@ namespace rcr
         public class Sprite : GameObject
         {
             Bitmap[] surfaces = { };
-            String? iname = null;
+            String iname = null;
             int idx = 0;
             float elapsed = 0;
 
@@ -44,7 +44,7 @@ namespace rcr
             * @param position posicion inicial (x, y) del GameObject
             * @param name     nombre a asignar a este GameObject
             */
-            public Sprite(String? iname, PointF position, String? name) :
+            public Sprite(String iname, PointF position, String name) :
                 base(position, new SizeF(0, 0), name)
             {
                 SetImage(iname);
@@ -55,7 +55,7 @@ namespace rcr
             *
             * @return el nombre de la secuencia
             */
-            public String? GetImagesName()
+            public String GetImagesName()
             {
                 return iname;
             }
@@ -124,7 +124,7 @@ namespace rcr
             *              al crear este Sprite)
             * @return el indice de la imagen actual
             */
-            public int SetImage(String? iname)
+            public int SetImage(String iname)
             {
                 return SetImage(iname, -1);
             }
@@ -137,9 +137,9 @@ namespace rcr
             * @param idx   el numero de la secuencia a utilizar
             * @return el indice de la imagen actual
             */
-            public int SetImage(String? iname, int idx)
+            public int SetImage(String iname, int idx)
             {
-                LittleGameEngine? lge = LittleGameEngine.GetInstance();
+                LittleGameEngine lge = LittleGameEngine.GetInstance();
                 if (lge == null) return 0;
 
                 if (iname != null)

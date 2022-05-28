@@ -20,7 +20,7 @@ namespace rcr
         {
             public const int GUI_LAYER = 0xFFFF;
 
-            private static LittleGameEngine? lge = null;
+            private static LittleGameEngine lge = null;
 
             private readonly SortedDictionary<int, List<GameObject>> gLayers;
             private readonly Dictionary<String, GameObject> gObjects;
@@ -33,10 +33,10 @@ namespace rcr
             private int fpsIdx;
             private bool running = false;
 
-            private IEvents? onMainUpdate = null;
+            private IEvents onMainUpdate = null;
             private readonly Dictionary<Keys, bool> keysPressed;
             private readonly bool[] mouseButtons = { false, false, false };
-            private readonly Point?[] mouseClicks = { null, null, null };
+            private readonly Nullable<Point>[] mouseClicks = { null, null, null };
 
             private readonly Dictionary<String, Bitmap[]> images;
             private readonly Dictionary<String, Font> fonts;
@@ -44,7 +44,7 @@ namespace rcr
 
             private readonly Bitmap screen;
             private readonly Color bgColor;
-            private Color? collidersColor = null;
+            private Nullable<Color> collidersColor = null;
 
             // ------ game engine ------
             /**
@@ -67,21 +67,21 @@ namespace rcr
 
                 this.bgColor = bgColor;
 
-                images = new();
-                fonts = new();
-                ttfFonts = new();
+                images = new Dictionary<String, Bitmap[]>();
+                fonts = new Dictionary<String, Font>();
+                ttfFonts = new PrivateFontCollection();
 
                 keysPressed = new Dictionary<Keys, bool>();
 
-                gObjects = new();
-                gLayers = new();
-                gObjectsToAdd = new();
-                gObjectsToDel = new();
+                gObjects = new Dictionary<String, GameObject> ();
+                gLayers = new SortedDictionary<int, List<GameObject>>();
+                gObjectsToAdd = new List<GameObject>();
+                gObjectsToDel = new List<GameObject>();
 
                 screen = CreateOpaqueImage(winSize.Width, winSize.Height);
-                camera = new(new PointF(0, 0), winSize);
+                camera = new Camera(new PointF(0, 0), winSize);
 
-                Panel panel = new();
+                Panel panel = new Panel();
                 panel.Size = winSize;
                 panel.AutoSize = true;
                 panel.BackColor = Color.FromArgb(0, Color.Black);
@@ -107,7 +107,9 @@ namespace rcr
             */
             public static LittleGameEngine GetInstance()
             {
-                return lge ?? throw new ApplicationException("LGE no se encuentra activo");
+                if(lge == null )
+                    throw new ApplicationException("LGE no se encuentra activo");
+                return lge;
             }
 
             /**
@@ -155,7 +157,9 @@ namespace rcr
             */
             public void Quit()
             {
-                this.Invoke(() => this.Close());
+                this.Invoke(
+                    new Action(() => this.Close() )
+                );
             }
 
             /**
@@ -165,12 +169,12 @@ namespace rcr
             */
             public void Run(int fps)
             {
-                Thread thread = new( () => TRun( fps));
+                Thread thread = new Thread( () => TRun( fps));
                 thread.Start();
                 Application.Run(this);
                 thread.Join();
             }
-        
+
             public void TRun(int fps)
             {
                 Bitmap screenImage = CreateOpaqueImage(winSize.Width, winSize.Height);
@@ -195,12 +199,12 @@ namespace rcr
                     long now = DateTime.Now.Ticks;
                     float dt = (now - tickPrev) / 10000000.0f;
                     tickPrev = now;
-               
+
                     fpsData[fpsIdx++] = dt;
                     fpsIdx %= fpsData.Length;
 
                     // --- Del gobj and gobj.OnDelete
-                    List<GameObject>? ondelete = new();
+                    List<GameObject> ondelete = new List<GameObject>();
                     foreach (GameObject gobj in gObjectsToDel)
                     {
                         gObjects.Remove(gobj.name);
@@ -213,7 +217,7 @@ namespace rcr
                     gObjectsToDel.Clear();
 
                     // --- Add Gobj and gobj.OnStart
-                    List<GameObject>? onstart = new();
+                    List<GameObject> onstart = new List<GameObject>();
                     foreach (GameObject gobj in gObjectsToAdd)
                     {
                         int layer = gobj.layer;
@@ -254,7 +258,7 @@ namespace rcr
                         onMainUpdate.OnMainUpdate(dt);
 
                     // --- gobj.OnCollision
-                    Dictionary<GameObject, List<GameObject>> oncollisions = new();
+                    Dictionary<GameObject, List<GameObject>> oncollisions = new Dictionary<GameObject, List<GameObject>>();
                     foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
                     {
                         int layer = elem.Key;
@@ -268,7 +272,7 @@ namespace rcr
                                 if (!gobj1.useColliders)
                                     continue;
 
-                                List<GameObject> colliders = new();
+                                List<GameObject> colliders = new List<GameObject>();
                                 foreach (GameObject gobj2 in elem.Value)
                                 {
                                     if (gobj1 == gobj2)
@@ -305,8 +309,8 @@ namespace rcr
                     g.Clear(bgColor);
 
                     // --- layers
-                    SolidBrush brush = new(bgColor);
-                    Pen pen = new(brush);
+                    SolidBrush brush = new SolidBrush( bgColor);
+                    Pen pen = new Pen(brush);
                     if (collidersColor != null)
                     {
                         brush = new SolidBrush((Color)collidersColor);
@@ -322,7 +326,7 @@ namespace rcr
                                 if (!gobj.rect.IntersectsWith(camera.rect))
                                     continue;
                                 PointF p = FixXY(gobj.GetPosition());
-                                Image? surface = gobj.surface;
+                                Image surface = gobj.surface;
                                 if (surface != null)
                                     g.DrawImage(surface, new Point((int)p.X, (int)p.Y));
 
@@ -349,7 +353,7 @@ namespace rcr
                         {
                             foreach (GameObject gobj in elem.Value)
                             {
-                                Bitmap? surface = gobj.surface;
+                                Bitmap surface = gobj.surface;
                                 if (surface != null)
                                 {
                                     float x = gobj.rect.X;
@@ -370,7 +374,9 @@ namespace rcr
 
                     try
                     {
-                        this.Invoke(() => this.Refresh());
+                        this.Invoke(
+                            new Action(() => this.Refresh() )
+                        );
                     }
                     catch (Exception e) { }
                 }
@@ -448,7 +454,7 @@ namespace rcr
             */
             public GameObject[] FindGObjectsByTag(int layer, String tag)
             {
-                List<GameObject> gobjs = new();
+                List<GameObject> gobjs = new List<GameObject>();
 
                 foreach (GameObject o in gLayers[layer])
                     if (o.name.StartsWith(tag))
@@ -487,7 +493,7 @@ namespace rcr
             */
             public GameObject[] CollidesWith(GameObject gobj)
             {
-                List<GameObject> gobjs = new();
+                List<GameObject> gobjs = new List<GameObject>();
 
                 if (gobj.useColliders)
                     foreach (GameObject o in gLayers[gobj.layer])
@@ -576,7 +582,7 @@ namespace rcr
             {
                 lock (keysPressed)
                 {
-                    return keysPressed.GetValueOrDefault(key, false);
+                    return keysPressed.ContainsKey(key) ? keysPressed[key] : false;
                 }
             }
 
@@ -628,7 +634,9 @@ namespace rcr
                 Point p = new Point(0, 0);
                 try
                 {
-                    p = this.Invoke(() => PointToClient(Cursor.Position));
+                    p = (Point)this.Invoke(
+                            new Action(() => this.PointToClient(Cursor.Position) )
+                        );
 
                     if (p.X < 0)
                         p.X = 0;
@@ -651,17 +659,17 @@ namespace rcr
             *
             * @return verdadero si se encuentra presionado
             */
-            public Point? GetMouseClicked(int button)
+            public Nullable<Point> GetMouseClicked(int button)
             {
                 lock (mouseClicks)
                 {
-                    Point? p = mouseClicks[button];
+                    Nullable<Point> p = mouseClicks[button];
                     mouseClicks[button] = null;
                     return p;
                 }
             }
 
-            public void MouseClicked(Object? sender, MouseEventArgs e)
+            public void MouseClicked(Object sender, MouseEventArgs e)
             {
                 lock (mouseClicks)
                 {
@@ -669,7 +677,7 @@ namespace rcr
                     mouseClicks[idx] = new Point(e.X, e.Y);
                 }
             }
-            public void MousePressed(Object? sender, MouseEventArgs e)
+            public void MousePressed(Object sender, MouseEventArgs e)
             {
                 lock (mouseButtons)
                 {
@@ -678,7 +686,7 @@ namespace rcr
                 }
             }
 
-            public void MouseReleased(Object? sender, MouseEventArgs e)
+            public void MouseReleased(Object sender, MouseEventArgs e)
             {
                 lock (mouseButtons)
                 {
@@ -695,8 +703,8 @@ namespace rcr
             */
             static public String[] GetSysFonts()
             {
-                List<String> sysfonts = new();
-                InstalledFontCollection ifc = new();
+                List<String> sysfonts = new List<String>();
+                InstalledFontCollection ifc = new InstalledFontCollection();
                 foreach (FontFamily fa in ifc.Families)
                     sysfonts.Add(fa.Name);
                 ifc.Dispose();
@@ -713,7 +721,7 @@ namespace rcr
             */
             public void LoadSysFont(String name, String fname, FontStyle fstyle, int fsize)
             {
-                Font? font = SystemFonts.GetFontByName(fname);
+                Font font = SystemFonts.GetFontByName(fname);
                 if (font == null) throw new ArgumentException();
 
                 fonts.Add(name, font);
@@ -727,7 +735,7 @@ namespace rcr
             * @param fstyle estilo del tipo de letra
             * @param fsize  tamano del tipo de letra
             */
-            public void LoadTTFFont(String name, String fname, FontStyle fstyle, int fsize)
+            public void LoadTTFont(String name, String fname, FontStyle fstyle, int fsize)
             {
                 ttfFonts.AddFontFile(fname);
                 FontFamily fontFamily = new FontFamily(ttfFonts.Families[ttfFonts.Families.Length-1].Name, ttfFonts);
@@ -789,18 +797,19 @@ namespace rcr
 
             private void FlipImage(Bitmap bitmap, bool flipX, bool flipY)
             {
+                Console.WriteLine( "{0} {1}", flipX, flipY);
                 if (flipX)
-                    bitmap.RotateFlip(RotateFlipType.Rotate270FlipXY);
+                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
                 if (flipY)
-                    bitmap.RotateFlip(RotateFlipType.Rotate180FlipY);
+                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipXY);
             }
 
             public void LoadImage(String iname, String pattern, bool flipX, bool flipY)
             {
                 List<Bitmap> bitmaps = ReadImages(pattern);
-                foreach (Bitmap b in bitmaps)
+                foreach (Bitmap bmp in bitmaps)
                 {
-                    FlipImage(b, flipX, flipY);
+                    FlipImage(bmp, flipX, flipY);
                 }
                 this.images.Add(iname, bitmaps.ToArray());
             }
@@ -812,7 +821,7 @@ namespace rcr
                 for (int i = 0; i < nimages; i++)
                 {
                     Bitmap b = bitmaps[i];
-                    Bitmap bmp = new(size.Width, size.Height);
+                    Bitmap bmp = new Bitmap(size.Width, size.Height);
 
                     Graphics g = Graphics.FromImage(bmp);
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -833,7 +842,7 @@ namespace rcr
                     Bitmap b = bitmaps[i];
                     int width = (int)Math.Round(b.Width * scale);
                     int height = (int)Math.Round(b.Height * scale);
-                    Bitmap bmp = new(width, height);
+                    Bitmap bmp = new Bitmap(width, height);
 
                     Graphics g = Graphics.FromImage(bmp);
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -855,20 +864,22 @@ namespace rcr
             */
             private List<Bitmap> ReadImages(String pattern)
             {
-                String? dir = Path.GetDirectoryName(pattern);
+                String dir = Path.GetDirectoryName(pattern);
                 String patt = Path.GetFileName(pattern);
-                List<Bitmap> bitmaps = new();
+                List<Bitmap> bitmaps = new List<Bitmap>();
 
                 if (dir == null)
                 {
-                    Bitmap bmp = new(Image.FromFile(patt));
+                    Bitmap bmp = new Bitmap(Image.FromFile(patt));
                     bitmaps.Add(bmp);
                 }
                 else
                 {
-                    foreach (String fname in Directory.EnumerateFiles(dir, patt))
+                    String[] fnames = new List<String>(Directory.EnumerateFiles(dir, patt)).ToArray();
+                    Array.Sort(fnames);
+                    foreach (String fname in fnames)
                     {
-                        Bitmap bmp = new(Image.FromFile(fname));
+                        Bitmap bmp = new Bitmap(Image.FromFile(fname));
                         bitmaps.Add(bmp);
                     }
                 }
@@ -882,7 +893,7 @@ namespace rcr
                 {
                     Graphics g = e.Graphics;
                     g.DrawImage(screen, new Point(0, 0));
-                    g.Dispose();
+                    //g.Dispose();
                 }
             }
 
