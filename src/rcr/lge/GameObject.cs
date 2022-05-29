@@ -27,6 +27,16 @@ namespace rcr
             *
             * @param origin posicion inicial (x,y) del GameObject
             * @param size   dimension (ancho,alto) del GameObject
+            */
+            public GameObject(PointF origin, SizeF size) :
+                this(origin.X, origin.Y, size.Width, size.Height, null)
+            { }
+
+            /**
+            * Crea un objeto del juego
+            *
+            * @param origin posicion inicial (x,y) del GameObject
+            * @param size   dimension (ancho,alto) del GameObject
             * @param name   nombre unico para este GameObject
             */
             public GameObject(PointF origin, SizeF size, String name) :
