@@ -42,10 +42,10 @@ namespace test
                 var rand = new Random();
                 for (int i = 0; i < numParticles; i++)
                 {
-                    float x = 300 + (float)rand.NextDouble() * 200;
-                    float y = 100 + (float)rand.NextDouble() * 100;
-                    float vx = -120 + (float)rand.NextDouble() * 240;
-                    float vy = -120 + (float)rand.NextDouble() * 240;
+                    float x = 300 + (float)rand.Next(200);
+                    float y = 100 + (float)rand.Next(100);
+                    float vx = -120 + (float)rand.Next(240);
+                    float vy = -120 + (float)rand.Next(240);
                     float m = 0.1f + (float)rand.NextDouble();
                     particles[i] = new Particle(x, y, vx, vy, m);
                 }

@@ -44,8 +44,8 @@ namespace test
                 var rand = new Random();
                 for (int i = 0; i < 500; i++)
                 {
-                    float x = (float)rand.NextDouble() * winSize.Width;
-                    float y = (float)rand.NextDouble() * winSize.Height;
+                    float x = (float)rand.Next(winSize.Width);
+                    float y = (float)rand.Next(winSize.Height);
                     Bird bird = new Bird("bird", new PointF(x, y));
                     lge.AddGObject(bird, 1);
                 }

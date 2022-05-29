@@ -36,9 +36,9 @@ namespace test
                 var rand = new Random();
                 for (int i = 0; i < 200; i++)
                 {
-                    float x = 50.0f + (float)rand.NextDouble() * 700.0f;
-                    float y = 50.0f + (float)rand.NextDouble() * 150.0f;
-                    float vx = -50.0f + (float)rand.NextDouble() * 100.0f;
+                    float x = 50.0f + (float)rand.Next(700);
+                    float y = 50.0f + (float)rand.Next(150);
+                    float vx = -50.0f + (float)rand.Next(100);
                     float vy = 0.0f;
                     Ball gobj = new Ball(x, y, vx, vy);
                     lge.AddGObject(gobj, 1);
