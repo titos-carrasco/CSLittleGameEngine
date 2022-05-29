@@ -22,7 +22,7 @@ namespace test
                     lge.SetOnMainUpdate(this);
 
                     // cargamos los recursos que usaremos
-                    String resourceDir = @"../../resources";
+                    String resourceDir = @"../resources";
 
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
                     lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
@@ -42,7 +42,7 @@ namespace test
                     lge.AddGObject(heroe, 1);
 
                     // # configuramos la camara
-                    lge.SetCameraBounds(new Rectangle(0, 0, 1920, 1056));
+                    lge.SetCameraBounds(new RectangleF(0, 0, 1920, 1056));
 
                     // posicionamos la camara
                     PointF heroePosition = heroe.GetPosition();

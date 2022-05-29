@@ -1,5 +1,11 @@
 # Changelog
 
+## 2022-05-29
+- Corrige errror en la salida del Game Loop
+- Formatea archivos
+- Mueve algunos demos
+- Se libera primer release con demos
+
 ## 2022-05-28
 - Se migró todo el código de Java a C#
 - Pendientes Sonidos y archicos TTF

@@ -378,13 +378,9 @@ namespace rcr
                         g.Dispose();
                     }
 
-                    try
-                    {
-                        this.Invoke(
-                            new Action(() => this.Refresh())
-                        );
-                    }
-                    catch (Exception) { }
+                    this.Invoke(
+                        new Action(() => this.Refresh())
+                    );
                 }
 
                 // --- gobj.OnQuit
@@ -395,6 +391,7 @@ namespace rcr
                 // cerramos la ventana en caso de que siga abierta
                 this.Close();
                 this.Dispose();
+                Application.Exit();
             }
 
             // sistema cartesiano y zona visible dada por la camara
@@ -566,7 +563,7 @@ namespace rcr
             *
             * @param bounds los limites
             */
-            public void SetCameraBounds(Rectangle bounds)
+            public void SetCameraBounds(RectangleF bounds)
             {
                 camera.SetBounds(bounds);
             }
@@ -797,11 +794,13 @@ namespace rcr
             {
                 if (flipX && flipY)
                     bitmap.RotateFlip(RotateFlipType.RotateNoneFlipXY);
-                else if (flipX){
+                else if (flipX)
+                {
                     bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
                     bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
                 }
-                else if (flipY){
+                else if (flipY)
+                {
                     bitmap.RotateFlip(RotateFlipType.Rotate90FlipY);
                     bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
                 }
@@ -903,13 +902,13 @@ namespace rcr
 
             protected override void OnFormClosing(FormClosingEventArgs e)
             {
-                e.Cancel = false;
-                base.OnFormClosing(e);
-
                 lock (this)
                 {
                     running = false;
                 }
+
+                e.Cancel = true;
+                base.OnFormClosing(e);
             }
 
         }

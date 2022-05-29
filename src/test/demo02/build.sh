@@ -1,8 +1,8 @@
-LGE="../../../rcr/lge"
+LGE="../../rcr/lge"
 LANGVERSION="6"
 SDK="4.5"
 TARGET="exe"
-OUT="demo03.exe"
+OUT="demo02.exe"
 
 rm "$OUT"
 export MONO_PATH="$LGE"

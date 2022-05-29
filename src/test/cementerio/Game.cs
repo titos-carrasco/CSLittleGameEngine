@@ -7,10 +7,12 @@ namespace test
 {
     namespace cementerio
     {
-        public class Game : IEvents {
+        public class Game : IEvents
+        {
             private readonly LittleGameEngine lge;
 
-            public Game() {
+            public Game()
+            {
                 Size winSize = new Size(640, 342);
 
                 lge = new LittleGameEngine(winSize, "El Cementerio", Color.Black);
@@ -40,7 +42,8 @@ namespace test
                 lge.AddGObject(ninja, 1);
             }
 
-            public void makeFloor() {
+            public void makeFloor()
+            {
                 Canvas[] suelos = new Canvas[] { new Canvas(new PointF(0, 85), new Size(170, 1)),
                         new Canvas(new PointF(0, 214), new Size(170, 1)),
                         new Canvas(new PointF(214, 300), new Size(128, 1)),
@@ -48,34 +51,40 @@ namespace test
                         new Canvas(new PointF(470, 257), new Size(127, 1)),
                         new Canvas(new PointF(513, 86), new Size(127, 1)) };
 
-                foreach (Canvas s in suelos) {
+                foreach (Canvas s in suelos)
+                {
                     s.EnableCollider(true);
                     s.SetTag("suelo");
                     lge.AddGObject(s, 1);
                 }
             }
 
-            public void makePlatforms() {
+            public void makePlatforms()
+            {
                 Platform[] platforms = new Platform[] { new Platform(200, 200, 'U', 100, 60),
                         new Platform(400, 100, 'L', 100, 60) };
-                foreach (Platform p in platforms) {
+                foreach (Platform p in platforms)
+                {
                     lge.AddGObject(p, 1);
                 }
             }
 
-            public void OnMainUpdate(float dt) {
+            public void OnMainUpdate(float dt)
+            {
                 // abortamos con la tecla Escape
                 if (lge.KeyPressed(Keys.Escape))
                     lge.Quit();
             }
 
             // main loop
-            public void Run(int fps) {
+            public void Run(int fps)
+            {
                 lge.Run(fps);
             }
 
             // show time
-            public static void Main(String[] args) {
+            public static void Main(String[] args)
+            {
                 Game game = new Game();
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");

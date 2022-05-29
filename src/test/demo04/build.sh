@@ -1,4 +1,4 @@
-LGE="../../../rcr/lge"
+LGE="../../rcr/lge"
 LANGVERSION="6"
 SDK="4.5"
 TARGET="exe"

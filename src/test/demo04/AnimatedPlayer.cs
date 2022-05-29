@@ -22,7 +22,7 @@ namespace test
                     lge.SetOnMainUpdate(this);
 
                     // cargamos los recursos que usaremos
-                    String resourceDir = @"../../resources";
+                    String resourceDir = @"../resources";
 
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
                     lge.LoadImage("heroe_idle_right", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, false, false);
@@ -37,7 +37,7 @@ namespace test
                     lge.AddGObject(fondo, 0);
 
                     // agregamos la barra de info
-                    Canvas infobar = new Canvas(new PointF(0, 0), new SizeF(640, 20), "infobar");
+                    Canvas infobar = new Canvas(new PointF(0, 0), new Size(640, 20), "infobar");
                     lge.AddGObjectGUI(infobar);
 
 
@@ -45,7 +45,7 @@ namespace test
                     lge.AddGObject(heroe, 1);
 
                     // # configuramos la camara
-                    lge.SetCameraBounds(new Rectangle(0, 0, 1920, 1056));
+                    lge.SetCameraBounds(new RectangleF(0, 0, 1920, 1056));
 
                     // establecemos que la camara siga al heroe
                     lge.SetCameraTarget(heroe, false);

@@ -7,46 +7,45 @@ namespace test
 {
     namespace simple
     {
-        namespace demo01
+        namespace demo03
         {
-            public class TheWorld : IEvents
+            public class MovePlayer : IEvents
             {
                 private readonly LittleGameEngine lge;
 
-                public TheWorld()
+                public MovePlayer()
                 {
                     // creamos el juego
-                    Size winSize = new Size(800, 440);
+                    Size winSize = new Size(640, 480);
 
-                    lge = new LittleGameEngine(winSize, "The World", Color.White);
+                    lge = new LittleGameEngine(winSize, "Move Player", Color.White);
                     lge.SetOnMainUpdate(this);
-                    //lge.ShowColliders(Color.Red);
 
                     // cargamos los recursos que usaremos
-                    String resourceDir = @"../../resources";
+                    String resourceDir = @"../resources";
 
-                    lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
-                    lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
-                    lge.LoadSysFont("banner", "Comic Sans MS", FontStyle.Regular, 30);
-                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
+                    lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
+                    lge.LoadImage("heroe_right", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
+                    lge.LoadImage("heroe_left", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, true, false);
+                    lge.LoadSysFont("monospace", "FreeMono", FontStyle.Regular, 12);
 
                     // agregamos el fondo
-                    Sprite fondo = new Sprite("fondo", new PointF(0, 0));
+                    Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
                     lge.AddGObject(fondo, 0);
 
                     // agregamos la barra de info
-                    Canvas infobar = new Canvas(new PointF(0, 0), new Size(800, 20), "infobar");
+                    Canvas infobar = new Canvas(new PointF(0, 0), new Size(640, 20), "infobar");
                     lge.AddGObjectGUI(infobar);
 
                     // agregamos al heroe
-                    Sprite heroe = new Sprite("heroe", new PointF(226, 254), "Heroe");
-                    //heroe.EnableCollider(true);
+                    MiHeroe heroe = new MiHeroe();
                     lge.AddGObject(heroe, 1);
 
-                    // agregamos un texto con transparencia
-                    Canvas canvas = new Canvas(new PointF(200, 110), new Size(400, 200));
-                    canvas.DrawText("Little Game Engine", new PointF(30, 90), "banner", Color.FromArgb(255, 20, 20, 20));
-                    lge.AddGObjectGUI(canvas);
+                    // # configuramos la camara
+                    lge.SetCameraBounds(new RectangleF(0, 0, 1920, 1056));
+
+                    // establecemos que la camara siga al heroe
+                    lge.SetCameraTarget(heroe, true);
                 }
 
                 public void OnMainUpdate(float dt)
@@ -69,11 +68,7 @@ namespace test
                                         );
                     Canvas infobar = (Canvas)lge.GetGObject("infobar");
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
-                    infobar.DrawText(info, new PointF(140, 0), "monospace", Color.Black);
-
-                    // animamos al heroe
-                    Sprite heroe = (Sprite)lge.GetGObject("Heroe");
-                    heroe.NextImage(dt, 0.060f);
+                    infobar.DrawText(info, new PointF(100, 0), "monospace", Color.Black);
                 }
 
                 // main loop
@@ -85,7 +80,7 @@ namespace test
                 // show time
                 public static void Main()
                 {
-                    TheWorld game = new TheWorld();
+                    MovePlayer game = new MovePlayer();
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");
                 }

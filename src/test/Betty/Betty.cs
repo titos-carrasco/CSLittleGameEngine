@@ -7,7 +7,8 @@ namespace test
 {
     namespace betty
     {
-        public class Betty : Sprite {
+        public class Betty : Sprite
+        {
             private readonly LittleGameEngine lge;
 
             private bool alive;
@@ -16,7 +17,7 @@ namespace test
 
             public Betty(String name, Size winSize) :
                 base("betty_idle", new PointF(0, 0), name)
-                {
+            {
 
                 // acceso al motor de juegos
                 lge = LittleGameEngine.GetInstance();
@@ -27,16 +28,19 @@ namespace test
                 this.winSize = winSize;
             }
 
-            public bool IsAlive() {
+            public bool IsAlive()
+            {
                 return alive;
             }
 
-            public void SetAlive(bool alive) {
+            public void SetAlive(bool alive)
+            {
                 this.alive = alive;
                 SetImage("betty_idle");
             }
 
-            public override void OnUpdate(float dt) {
+            public override void OnUpdate(float dt)
+            {
                 // solo si estoy viva
                 if (!alive)
                     return;
@@ -53,19 +57,28 @@ namespace test
 
                 // cambiamos sus coordenadas e imagen segun la tecla presionada
                 int idx = GetImagesIndex();
-                if (lge.KeyPressed(Keys.Right)) {
+                if (lge.KeyPressed(Keys.Right))
+                {
                     SetImage("betty_right", idx);
                     x = x + pixels;
-                } else if (lge.KeyPressed(Keys.Left)) {
+                }
+                else if (lge.KeyPressed(Keys.Left))
+                {
                     SetImage("betty_left", idx);
                     x = x - pixels;
-                } else if (lge.KeyPressed(Keys.Up)) {
+                }
+                else if (lge.KeyPressed(Keys.Up))
+                {
                     SetImage("betty_up", idx);
                     y = y - pixels;
-                } else if (lge.KeyPressed(Keys.Down)) {
+                }
+                else if (lge.KeyPressed(Keys.Down))
+                {
                     SetImage("betty_down", idx);
                     y = y + pixels;
-                } else {
+                }
+                else
+                {
                     SetImage("betty_idle", idx);
                     if (x % 32 < 4)
                         x = (float)Math.Round(x / 32) * 32;
@@ -88,17 +101,21 @@ namespace test
                 NextImage(dt, 0.1f);
             }
 
-            public override void OnPostUpdate(float dt) {
+            public override void OnPostUpdate(float dt)
+            {
                 if (!alive)
                     return;
 
                 GameObject[] gobjs = lge.CollidesWith(this);
                 foreach (GameObject gobj in gobjs)
-                    if (gobj.GetTag().Equals("zombie")) {
+                    if (gobj.GetTag().Equals("zombie"))
+                    {
                         alive = false;
                         Console.WriteLine("Un zombie me mato");
                         return;
-                    } else if (gobj.GetTag().Equals("muro")) {
+                    }
+                    else if (gobj.GetTag().Equals("muro"))
+                    {
                         SetPosition(lastPoint);
                     }
             }

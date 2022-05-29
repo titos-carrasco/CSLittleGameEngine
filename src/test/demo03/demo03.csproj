@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <Reference Include="lge">
-      <HintPath>../../../rcr/lge/lge.dll</HintPath>
+      <HintPath>../../rcr/lge/lge.dll</HintPath>
     </Reference>
   </ItemGroup>
 
