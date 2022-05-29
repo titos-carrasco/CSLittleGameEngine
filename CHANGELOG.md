@@ -1,6 +1,11 @@
 # Changelog
 
 ## 2022-05-28
+- Se migró todo el código de Java a C#
+- Pendientes Sonidos y archicos TTF
+- Revisar en Windows
+
+## 2022-05-28
 - Corrige
     - Los Textos no se visualizan, sólo aparecen rectángulos => En linux hay problemas con los TTF
     - Las opciones Flip de las imágenes no están funcionando => En linux los RotateFlipType tienen problemas
