@@ -23,9 +23,7 @@ namespace test
                 lge.SetOnMainUpdate(this);
 
                 // cargamos los recursos que usaremos
-                String resourceDir = "../../resources";
-
-                lge.LoadSysFont("monospace", resourceDir + "/fonts/FreeMono.ttf", FontStyle.Regular, 12);
+                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
 
                 // agregamos la barra de info
                 Canvas infobar = new Canvas(new PointF(0, 0), new Size(800, 20), "infobar");

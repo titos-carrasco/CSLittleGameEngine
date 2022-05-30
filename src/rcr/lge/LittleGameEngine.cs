@@ -85,20 +85,13 @@ namespace rcr
                 g.Clear(bgColor);
                 g.Dispose();
 
-                Panel panel = new Panel();
-                panel.Size = winSize;
-                panel.AutoSize = true;
-                panel.BackColor = Color.FromArgb(0, Color.Black);
-                panel.MouseDown += this.MousePressed;
-                panel.MouseUp += this.MouseReleased;
-                panel.Show();
-                this.Controls.Add(panel);
-
                 this.Text = title;
                 this.FormBorderStyle = FormBorderStyle.Fixed3D;
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
                 this.AutoSize = true;
+                this.DoubleBuffered = true;
+                this.ClientSize = winSize;
                 this.Show();
 
                 Application.DoEvents();
@@ -185,7 +178,7 @@ namespace rcr
             {
                 Bitmap screenImage = CreateOpaqueImage(winSize.Width, winSize.Height);
                 running = true;
-                long tickExpected = 10000000 / fps;
+                long tickExpected = TimeSpan.TicksPerSecond / fps;
                 long tickPrev = DateTime.Now.Ticks;
                 while (true)
                 {
@@ -200,10 +193,10 @@ namespace rcr
                     // --- tiempo en ms desde el ciclo anterior
                     long tickElapsed = DateTime.Now.Ticks - tickPrev;
                     if (tickElapsed < tickExpected)
-                        Thread.Sleep((int)(tickExpected - tickElapsed) / 10000);
+                        Thread.Sleep((int)((tickExpected - tickElapsed) / TimeSpan.TicksPerMillisecond));
 
                     long now = DateTime.Now.Ticks;
-                    float dt = (now - tickPrev) / 10000000.0f;
+                    float dt = (now - tickPrev) / (float)TimeSpan.TicksPerSecond;
                     tickPrev = now;
 
                     fpsData[fpsIdx++] = dt;
@@ -389,8 +382,12 @@ namespace rcr
                         gobj.OnQuit();
 
                 // cerramos la ventana en caso de que siga abierta
-                this.Close();
-                this.Dispose();
+                this.Invoke(
+                    new Action(() => this.Close())
+                );
+                this.Invoke(
+                    new Action(() => this.Dispose())
+                );
                 Application.Exit();
             }
 
@@ -638,7 +635,10 @@ namespace rcr
             */
             public Point GetMousePosition()
             {
-                Point p = this.PointToClient(Cursor.Position);
+                Point p = new Point(-1,-1);
+                this.Invoke(
+                        new Action(() => this.PointToClient(Cursor.Position))
+                    );
 
                 if (p.X < 0 || p.X >= this.winSize.Width || p.Y < 0 || p.Y >= this.winSize.Height)
                 {
@@ -866,6 +866,8 @@ namespace rcr
             */
             private List<Bitmap> ReadImages(String pattern)
             {
+                pattern = FixDirectorySeparatorChar(pattern);
+
                 String dir = Path.GetDirectoryName(pattern);
                 String patt = Path.GetFileName(pattern);
                 List<Bitmap> bitmaps = new List<Bitmap>();
@@ -888,13 +890,18 @@ namespace rcr
                 return bitmaps;
             }
 
+            protected String FixDirectorySeparatorChar( String path)
+            {
+                return path.Replace('/', Path.DirectorySeparatorChar);
+            }
+
             // ------ FORM ------
-            protected override void OnPaintBackground(PaintEventArgs e)
+            protected override void  OnPaintBackground(PaintEventArgs e)
             {
                 lock (screen)
                 {
                     Graphics g = e.Graphics;
-                    g.Clear(Color.White);
+                    g.Clear(Color.LightGray);
                     g.DrawImage(screen, new Point(0, 0));
                     //g.Dispose();
                 }

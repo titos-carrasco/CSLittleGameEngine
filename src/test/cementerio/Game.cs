@@ -11,7 +11,7 @@ namespace test
         {
             private readonly LittleGameEngine lge;
 
-            public Game()
+            public Game(String resourceDir)
             {
                 Size winSize = new Size(640, 342);
 
@@ -19,8 +19,6 @@ namespace test
                 lge.SetOnMainUpdate(this);
 
                 // cargamos los recursos que usaremos
-                String resourceDir = @"./resources";
-
                 lge.LoadImage("fondo", resourceDir + "/fondo.png", false, false);
                 lge.LoadImage("ninja-idle-right", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, false, false);
                 lge.LoadImage("ninja-idle-left", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, true, false);
@@ -85,7 +83,7 @@ namespace test
             // show time
             public static void Main(String[] args)
             {
-                Game game = new Game();
+                Game game = new Game(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\cementerio\resources");
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

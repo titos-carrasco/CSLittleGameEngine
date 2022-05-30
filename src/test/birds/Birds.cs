@@ -11,7 +11,7 @@ namespace test
         {
             private readonly LittleGameEngine lge;
 
-            public Birds()
+            public Birds(String resourceDir)
             {
                 // creamos el juego
                 Size winSize = new Size(800, 440);
@@ -20,13 +20,11 @@ namespace test
                 lge.SetOnMainUpdate(this);
 
                 // cargamos los recursos que usaremos
-                String resourceDir = @"../resources";
-
                 lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
                 lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
                 lge.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
                 lge.LoadImage("bird", resourceDir + "/images/BlueBird/frame-*.png", 0.04f, false, false);
-                lge.LoadSysFont("monospace", "FreeMono", FontStyle.Regular, 12);
+                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
 
                 // agregamos el fondo
                 Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -83,7 +81,7 @@ namespace test
             // show time
             public static void Main(String[] args)
             {
-                Birds game = new Birds();
+                Birds game = new Birds(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

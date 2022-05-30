@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net4.5</TargetFramework>
+	<TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>6</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>

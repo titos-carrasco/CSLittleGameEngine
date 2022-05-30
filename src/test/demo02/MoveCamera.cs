@@ -13,7 +13,7 @@ namespace test
             {
                 private readonly LittleGameEngine lge;
 
-                public MoveCamera()
+                public MoveCamera(String resourceDir)
                 {
                     // creamos el juego
                     Size winSize = new Size(640, 480);
@@ -22,8 +22,6 @@ namespace test
                     lge.SetOnMainUpdate(this);
 
                     // cargamos los recursos que usaremos
-                    String resourceDir = @"../resources";
-
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
                     lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
                     lge.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
@@ -106,7 +104,7 @@ namespace test
                 // show time
                 public static void Main()
                 {
-                    MoveCamera game = new MoveCamera();
+                    MoveCamera game = new MoveCamera(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");
                 }

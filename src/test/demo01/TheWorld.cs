@@ -13,7 +13,7 @@ namespace test
             {
                 private readonly LittleGameEngine lge;
 
-                public TheWorld()
+                public TheWorld(String resourceDir)
                 {
                     // creamos el juego
                     Size winSize = new Size(800, 440);
@@ -23,8 +23,6 @@ namespace test
                     //lge.ShowColliders(Color.Red);
 
                     // cargamos los recursos que usaremos
-                    String resourceDir = @"../resources";
-
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
                     lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
                     lge.LoadSysFont("banner", "Comic Sans MS", FontStyle.Regular, 30);
@@ -85,7 +83,7 @@ namespace test
                 // show time
                 public static void Main()
                 {
-                    TheWorld game = new TheWorld();
+                    TheWorld game = new TheWorld(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");
                 }

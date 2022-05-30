@@ -13,7 +13,7 @@ namespace test
             {
                 private readonly LittleGameEngine lge;
 
-                public AnimatedPlayer()
+                public AnimatedPlayer(String resourceDir)
                 {
                     // creamos el juego
                     Size winSize = new Size(640, 480);
@@ -22,15 +22,13 @@ namespace test
                     lge.SetOnMainUpdate(this);
 
                     // cargamos los recursos que usaremos
-                    String resourceDir = @"../resources";
-
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
                     lge.LoadImage("heroe_idle_right", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, false, false);
                     lge.LoadImage("heroe_idle_left", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, true, false);
                     lge.LoadImage("heroe_run_right", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, false, false);
                     lge.LoadImage("heroe_run_left", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, true, false);
                     lge.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
-                    lge.LoadSysFont("monospace", "FreeMono", FontStyle.Regular, 12);
+                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -83,7 +81,7 @@ namespace test
                 // show time
                 public static void Main()
                 {
-                    AnimatedPlayer game = new AnimatedPlayer();
+                    AnimatedPlayer game = new AnimatedPlayer(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");
                 }

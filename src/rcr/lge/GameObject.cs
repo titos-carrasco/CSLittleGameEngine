@@ -237,7 +237,7 @@ namespace rcr
             */
             public void SetTag(String tag)
             {
-                this.tag = String.Copy(tag);
+                this.tag = new String(tag);
             }
 
             /**

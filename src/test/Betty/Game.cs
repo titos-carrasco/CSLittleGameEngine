@@ -13,7 +13,7 @@ namespace test
 
             private int[,] mapa;
 
-            public Game()
+            public Game(String resourceDir)
             {
                 // creamos el juego
                 Size winSize = new Size(608, 736);
@@ -22,8 +22,6 @@ namespace test
                 lge.SetOnMainUpdate(this);
 
                 // cargamos los recursos que usaremos
-                String resourceDir = "../resources";
-
                 lge.LoadImage("fondo", resourceDir + "/images/Betty/Fondo.png", false, false);
                 lge.LoadImage("betty_idle", resourceDir + "/images/Betty/idle-0*.png", false, false);
                 lge.LoadImage("betty_down", resourceDir + "/images/Betty/down-0*.png", false, false);
@@ -31,7 +29,7 @@ namespace test
                 lge.LoadImage("betty_left", resourceDir + "/images/Betty/left-0*.png", false, false);
                 lge.LoadImage("betty_right", resourceDir + "/images/Betty/right-0*.png", false, false);
                 lge.LoadImage("zombie", resourceDir + "/images/Kenny/Zombie/zombie_walk*.png", false, false);
-                lge.LoadSysFont("monospace", "FreeMono", FontStyle.Regular, 12);
+                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
 
                 // agregamos el fondo
                 Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -110,7 +108,7 @@ namespace test
             // show time
             public static void Main(String[] args)
             {
-                Game game = new Game();
+                Game game = new Game(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

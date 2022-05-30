@@ -21,9 +21,7 @@ namespace test
                 lge.SetOnMainUpdate(this);
 
                 // cargamos los recursos que usaremos
-                //String resourceDir = @"../../resources";
-
-                lge.LoadSysFont("monospace", "FreeMono", FontStyle.Regular, 12);
+                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
 
                 // agregamos el suelo
                 ground = new Canvas(new PointF(0, 340), new Size(800, 100), "ground");
