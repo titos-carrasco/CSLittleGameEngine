@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Threading;
@@ -93,7 +94,6 @@ namespace rcr
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
                 this.AutoSize = true;
-                this.DoubleBuffered = true;
                 this.ClientSize = winSize;
                 this.Show();
 
@@ -679,7 +679,7 @@ namespace rcr
             /// <param name="name">El nombre interno a asignar</param>
             /// <param name="fname">El nombre del tipo de letra</param>
             /// <param name="fstyle">El estilo a aplicar</param>
-            /// <param name="fsize">El tamaño a asignar</param>
+            /// <param name="fsize">El tamano a asignar</param>
             public void LoadSysFont(String name, String fname, FontStyle fstyle, int fsize)
             {
                 FontFamily fontFamily = new FontFamily(fname);
@@ -693,7 +693,7 @@ namespace rcr
             /// <param name="name">El nombre interno a asignar</param>
             /// <param name="fname">El nombre del archivo a cargar</param>
             /// <param name="fstyle">El estilo a aplicar</param>
-            /// <param name="fsize">El tamaño a asignar</param>
+            /// <param name="fsize">El tamano a asignar</param>
             public void LoadTTFont(String name, String fname, FontStyle fstyle, int fsize)
             {
                 ttfFonts.AddFontFile(fname);
@@ -722,7 +722,7 @@ namespace rcr
             /// <returns>La imagen sin transparencia</returns>
             static protected internal Bitmap CreateOpaqueImage(int width, int height)
             {
-                return new Bitmap(width, height);
+                return new Bitmap(width, height, PixelFormat.Format32bppRgb);
             }
 
             /// <summary>
@@ -733,7 +733,7 @@ namespace rcr
             /// <returns>La imagen con transparencia</returns>
             static protected internal Bitmap CreateTranslucentImage(int width, int height)
             {
-                return new Bitmap(width, height);
+                return new Bitmap(width, height, PixelFormat.Format32bppArgb);
             }
 
             /// <summary>
@@ -873,9 +873,7 @@ namespace rcr
                 lock (screen)
                 {
                     Graphics g = e.Graphics;
-                    g.Clear(Color.LightGray);
                     g.DrawImage(screen, new Point(0, 0));
-                    //g.Dispose();
                 }
             }
 
