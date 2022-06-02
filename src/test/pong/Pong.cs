@@ -8,7 +8,7 @@ namespace test
     namespace pong
     {
 
-        public class Pong : IEvents
+        public class Pong
         {
             private readonly LittleGameEngine lge;
             private int paddleSpeed = 240;
@@ -19,7 +19,7 @@ namespace test
                 Size winSize = new Size(640, 640);
 
                 lge = new LittleGameEngine(winSize, "Ping", Color.Black);
-                lge.SetOnMainUpdate(this);
+                lge.onMainUpdate=OnMainUpdate;
                 // lge.ShowColliders(Color.Red);
 
                 // cargamos los recursos que usaremos

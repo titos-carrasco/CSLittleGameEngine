@@ -7,7 +7,7 @@ namespace test
 {
     namespace bouncing
     {
-        public class Bouncing : IEvents
+        public class Bouncing
         {
             private readonly LittleGameEngine lge;
             private Canvas ground;
@@ -18,7 +18,7 @@ namespace test
                 Size winSize = new Size(800, 440);
 
                 lge = new LittleGameEngine(winSize, "Bouncing Balls", Color.White);
-                lge.SetOnMainUpdate(this);
+                lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
                 lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);

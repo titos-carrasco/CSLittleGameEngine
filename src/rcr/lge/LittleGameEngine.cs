@@ -11,11 +11,10 @@ namespace rcr
 {
     namespace lge
     {
-        /**
-        * La Pequena Maquina de Juegos
-        *
-        * @author Roberto carrasco (titos.carrasco@gmail.com)
-        */
+        /// <summary>
+        /// La Pequena Maquina de Juegos
+        /// <para>@author Roberto carrasco (titos.carrasco@gmail.com)</para>
+        /// </summary>
         public class LittleGameEngine : Form
         {
             public const int GUI_LAYER = 0xFFFF;
@@ -33,7 +32,7 @@ namespace rcr
             private int fpsIdx;
             private bool running = false;
 
-            private IEvents onMainUpdate = null;
+            public Action<float> onMainUpdate = null;
             private readonly Dictionary<Keys, bool> keysPressed;
             private readonly bool[] mouseButtons = { false, false, false };
             private readonly Nullable<Point>[] mouseClicks = { null, null, null };
@@ -47,13 +46,14 @@ namespace rcr
             private Nullable<Color> collidersColor = null;
 
             // ------ game engine ------
-            /**
-            * Crea el juego
-            *
-            * @param winSize dimensiones de la ventana de despliegue
-            * @param title   titulo de la ventana
-            * @param bgColor color de fondo de la ventana
-            */
+
+            /// <summary>
+            /// Crea el juego
+            /// </summary>
+            /// <param name="winSize">Dimensiones de la ventana de despliegue.</param>
+            /// <param name="title">Titulo de la ventana.</param>
+            /// <param name="bgColor">Color de fondo de la ventana</param>
+            /// <exception cref="System.ApplicationException">LittleGameEngine ya se encuentra activa</exception>
             public LittleGameEngine(Size winSize, String title, Color bgColor)
             {
                 if (lge != null)
@@ -85,6 +85,9 @@ namespace rcr
                 g.Clear(bgColor);
                 g.Dispose();
 
+                this.MouseDown += MousePressed;
+                this.MouseUp += MouseReleased;
+                this.MouseClick += MouseClicked;
                 this.Text = title;
                 this.FormBorderStyle = FormBorderStyle.Fixed3D;
                 this.MaximizeBox = false;
@@ -97,12 +100,11 @@ namespace rcr
                 Application.DoEvents();
             }
 
-            /**
-            * Obtiene una instancia del juego en ejecucion. Util para las diferentes clases
-            * utilizadas en un juego tal de acceder a metodos estaticos
-            *
-            * @return la instancia de LGE en ejecucion
-            */
+            /// <summary>
+            /// Obtiene una instancia del juego en ejecucion. Util para las diferentes clases utilizadas en un juego tal de acceder a metodos estaticos
+            /// </summary>
+            /// <returns><La instancia de LGE en ejecucion/returns>
+            /// <exception cref="System.ApplicationException">LGE no se encuentra activo</exception>
             public static LittleGameEngine GetInstance()
             {
                 if (lge == null)
@@ -110,11 +112,10 @@ namespace rcr
                 return lge;
             }
 
-            /**
-            * Obtiene los FPS calculados como el promedio de los ultimos 30 valores
-            *
-            * @return los frame por segundo calculados
-            */
+            /// <summary>
+            /// Obtiene los FPS calculados como el promedio de los ultimos 30 valores
+            /// </summary>
+            /// <returns>Los frame por segundo calculados</returns>
             public float GetFPS()
             {
                 float dt = 0;
@@ -124,35 +125,18 @@ namespace rcr
                 return dt == 0 ? 0 : 1.0f / dt;
             }
 
-            /**
-            * Si se especifica un color se habilita el despliegue del rectangulo que bordea
-            * a todos los objetos (util para ver colisiones).
-            *
-            * Si se especifica null se desactiva
-            *
-            * @param color el color para los bordes de los rectangulos
-            */
+            /// <summary>
+            /// Si se especifica un color se habilita el despliegue del rectangulo que bordea a todos los objetos (util para ver colisiones).
+            /// </summary>
+            /// <param name="color">El color para los bordes de los rectangulos.</param>
             public void ShowColliders(Color color)
             {
                 collidersColor = color;
             }
 
-            /**
-            * Establece la clase que recibira el evento onMainUpdate que es invocado justo
-            * despues de invocar a los metodos onUpdate() de los GameObjects.
-            *
-            * Esta clase debe implementar IEvents
-            *
-            * @param iface la clase que recibira el evento
-            */
-            public void SetOnMainUpdate(IEvents iface)
-            {
-                this.onMainUpdate = iface;
-            }
-
-            /**
-            * Finaliza el Game Loop de LGE
-            */
+            /// <summary>
+            /// Finaliza el Game Loop de LGE
+            /// </summary>
             public void Quit()
             {
                 lock (this)
@@ -161,11 +145,10 @@ namespace rcr
                 }
             }
 
-            /**
-            * Inicia el Game Loop de LGE tratando de mantener los fps especificados
-            *
-            * @param fps los fps a mantener
-            */
+            /// <summary>
+            /// Inicia el Game Loop de LGE tratando de mantener los fps especificados
+            /// </summary>
+            /// <param name="fps">Los fps a mantener</param>
             public void Run(int fps)
             {
                 Thread thread = new Thread(() => TRun(fps));
@@ -174,7 +157,11 @@ namespace rcr
                 thread.Join();
             }
 
-            public void TRun(int fps)
+            /// <summary>
+            /// El GameLoop de la Pequena Maquina de Juegos
+            /// </summary>
+            /// <param name="fps">Los FPS a mantener</param>
+            private void TRun(int fps)
             {
                 Bitmap screenImage = CreateOpaqueImage(winSize.Width, winSize.Height);
                 running = true;
@@ -254,7 +241,7 @@ namespace rcr
 
                     // --- game.OnMainUpdate
                     if (onMainUpdate != null)
-                        onMainUpdate.OnMainUpdate(dt);
+                        onMainUpdate(dt);
 
                     // --- gobj.OnCollision
                     Dictionary<GameObject, List<GameObject>> oncollisions = new Dictionary<GameObject, List<GameObject>>();
@@ -391,14 +378,11 @@ namespace rcr
                 Application.Exit();
             }
 
-            // sistema cartesiano y zona visible dada por la camara
-            /**
-            * Traslada las coordenadas del GameObject a la zona de despliegue de la camara
-            *
-            * @param p las coordenadas a trasladar
-            *
-            * @return las coordenadas trasladadas
-            */
+            /// <summary>
+            /// Traslada las coordenadas del GameObject a la zona de despliegue de la camara
+            /// </summary>
+            /// <param name="p">Las coordenadas a trasladar</param>
+            /// <returns>Las coordenadas trasladadas</returns>
             private PointF FixXY(PointF p)
             {
                 float xo = p.X;
@@ -413,12 +397,12 @@ namespace rcr
             }
 
             // ------ gobjects ------
-            /**
-            * Agrega un GameObject al juego el que quedara habilitado en el siguiente ciclo
-            *
-            * @param gobj  el GameObject a agregar
-            * @param layer la capa a la cual pertenece
-            */
+
+            /// <summary>
+            /// Agrega un GameObject al juego el que quedara habilitado en el siguiente ciclo
+            /// </summary>
+            /// <param name="gobj">El GameObject a agregar</param>
+            /// <param name="layer">La capa a la cual pertenece</param>
             public void AddGObject(GameObject gobj, int layer)
             {
                 gobj.layer = layer;
@@ -426,36 +410,31 @@ namespace rcr
                 gObjectsToAdd.Add(gobj);
             }
 
-            /**
-            * Agrega un GameObject a la interfaz grafica del juego
-            *
-            * @param gobj el GameObject a agregar
-            */
+            /// <summary>
+            /// Agrega un GameObject a la interfaz grafica del juego
+            /// </summary>
+            /// <param name="gobj">El GameObject a agregar</param>
             public void AddGObjectGUI(GameObject gobj)
             {
                 AddGObject(gobj, GUI_LAYER);
             }
 
-            /**
-            * Retorna el GameObject identificado con el nombre especificado
-            *
-            * @param name el nombre del GameObject a buscar
-            *
-            * @return el GameObject buscado (nulo si no lo encuentra)
-            */
+            /// <summary>
+            /// Busca un GameObject por su nombre
+            /// </summary>
+            /// <param name="name">El nombre del GameObject a buscar</param>
+            /// <returns>El GameObject encontrado</returns>
             public GameObject GetGObject(String name)
             {
                 return gObjects[name];
             }
 
-            /**
-            * Obtiene todos los GameObject de una capa cuyo tag comienza con un texto dado
-            *
-            * @param layer la capa den donde buscar
-            * @param tag   el texto inicial del tag
-            *
-            * @return los GameObjects encontrados
-            */
+            /// <summary>
+            /// Obtiene todos los GameObject de una capa cuyo tag comienza con un texto dado
+            /// </summary>
+            /// <param name="layer">La capa en donde buscar</param>
+            /// <param name="tag">El texto inicial del tag</param>
+            /// <returns>Los GameObjects encontrados</returns>
             public GameObject[] FindGObjectsByTag(int layer, String tag)
             {
                 List<GameObject> gobjs = new List<GameObject>();
@@ -467,34 +446,29 @@ namespace rcr
                 return gobjs.ToArray(); ;
             }
 
-            /**
-            * Retorna el total de GameObjects en el juego
-            *
-            * @return el total de GameObjects
-            */
+            /// <summary>
+            /// Determina el total de GameObjects en el juego
+            /// </summary>
+            /// <returns>El total de GameObjects</returns>
             public int GetCountGObjects()
             {
                 return gObjects.Count;
             }
 
-            /**
-            * Elimina un GameObject del juego en el siguiente ciclo
-            *
-            * @param gobj el GameObject a eliminar
-            */
+            /// <summary>
+            /// Elimina un GameObject del juego en el siguiente ciclo
+            /// </summary>
+            /// <param name="gobj">El GameObject a eliminar</param>
             public void DelGObject(GameObject gobj)
             {
                 gObjectsToDel.Add(gobj);
             }
 
-            /**
-            * Obtiene todos los GameObject que colisionan con un GameObject dado en la
-            * misma capa
-            *
-            * @param gobj el GameObject a inspeccionar
-            *
-            * @return los GameObjects con los que colisiona
-            */
+            /// <summary>
+            /// Determina todos los GameObject que colisionan con un GameObject dado en la misma capa
+            /// </summary>
+            /// <param name="gobj">El GameObject a inspeccionar.</param>
+            /// <returns>Los GameObjects con los que colisiona</returns>
             public GameObject[] CollidesWith(GameObject gobj)
             {
                 List<GameObject> gobjs = new List<GameObject>();
@@ -508,31 +482,29 @@ namespace rcr
             }
 
             // ------ camera ------
-            /**
-            * Retorna la posiciona de la camara
-            *
-            * @return la posicion
-            */
+
+            /// <summary>
+            /// Obtiene la posiciona de la camara
+            /// </summary>
+            /// <returns>La posicion de la camara</returns>
             public PointF GetCameraPosition()
             {
                 return camera.GetPosition();
             }
 
-            /**
-            * retorna la dimension de la camara
-            *
-            * @return la dimension
-            */
+            /// <summary>
+            /// Obtiene la dimension de la camara
+            /// </summary>
+            /// <returns>La dimension de la camara</returns>
             public SizeF GetCameraSize()
             {
                 return camera.GetSize();
             }
 
-            /**
-            * Establece el GameObject al cual la camara seguira de manera automatica
-            *
-            * @param gobj el GameObject a seguir
-            */
+            /// <summary>
+            /// Establece el GameObject al cual la camara seguira de manera automatica
+            /// </summary>
+            /// <param name="gobj">El GameObject a seguir</param>
             public void SetCameraTarget(GameObject gobj)
             {
                 if (gobj == null)
@@ -541,47 +513,42 @@ namespace rcr
                     SetCameraTarget(gobj, true);
             }
 
-            /**
-            * Establece el GameObject al cual la camara seguira de manera automatica
-            *
-            * @param gobj   el GameObject a seguir
-            * @param center si es verdadero la camara se centrara en el centro del
-            *               GameObject, en caso contrario lo hara en el extremo superior
-            *               izquierdo
-            */
+            /// <summary>
+            /// Establece el GameObject al cual la camara seguira de manera automatica
+            /// </summary>
+            /// <param name="gobj">El GameObject a seguir</param>
+            /// <param name="center">Si es verdadero la camara se centrara en el centro del GameObject, en caso contrario lo hara en el extremo superior izquierdo</param>
             public void SetCameraTarget(GameObject gobj, bool center)
             {
                 camera.target = gobj;
                 camera.targetInCenter = center;
             }
 
-            /**
-            * establece los limites en los cuales se movera la camara
-            *
-            * @param bounds los limites
-            */
+            /// <summary>
+            /// Establece los limites en los cuales se movera la camara
+            /// </summary>
+            /// <param name="bounds">Los limites</param>
             public void SetCameraBounds(RectangleF bounds)
             {
                 camera.SetBounds(bounds);
             }
 
-            /**
-            * Establece la posicion de la camara
-            *
-            * @param position la posicion
-            */
+            /// <summary>
+            /// Establece la posicion de la camara
+            /// </summary>
+            /// <param name="position">La posicion</param>
             public void SetCameraPosition(PointF position)
             {
                 camera.SetPosition(position);
             }
 
             // ------ keys ------
-            /**
-            * Determina si una tecla se encuentra presionada o no
-            *
-            * @param key la tecla a inspeccionar
-            * @return verdadero si la tecla se encuentra presionada
-            */
+
+            /// <summary>
+            /// Determina si una tecla se encuentra presionada o no
+            /// </summary>
+            /// <param name="key">La tecla a inspeccionar</param>
+            /// <returns>Verdadero si la tecla se encuentra presionada</returns>
             public bool KeyPressed(Keys key)
             {
                 lock (keysPressed)
@@ -615,11 +582,11 @@ namespace rcr
             }
 
             // ------ mouse ------
-            /**
-            * Retorna el estado de los botones del mouse
-            *
-            * @return el estado de los botones
-            */
+
+            /// <summary>
+            /// Determina el estado de los botones del mouse
+            /// </summary>
+            /// <returns>El estado de los botones</returns>
             public bool[] GetMouseButtons()
             {
                 lock (mouseButtons)
@@ -628,34 +595,31 @@ namespace rcr
                 }
             }
 
-            /**
-            * Determina la posicion del mouse en la ventana
-            *
-            * @return la posicion del mouse
-            */
+            /// <summary>
+            /// Determina la posicion del mouse en la ventana.
+            /// </summary>
+            /// <returns>La posicion del mouse</returns>
             public Point GetMousePosition()
             {
                 Point p = new Point(-1,-1);
-                this.Invoke(
-                        new Action(() => this.PointToClient(Cursor.Position))
-                    );
 
-                if (p.X < 0 || p.X >= this.winSize.Width || p.Y < 0 || p.Y >= this.winSize.Height)
+                this.Invoke(new Action(() => p = PointToClient(Cursor.Position)));
+                if (p == null){
+                    p = new Point(-1, -1);
+                }
+                else if( p.X < 0 || p.X >= this.winSize.Width || p.Y < 0 || p.Y >= this.winSize.Height)
                 {
-                    p.X = -1;
-                    p.Y = -1;
+                    p = new Point(-1, -1);
                 }
 
                 return p;
             }
 
-            /**
-            * Determina si un boton del mouse se encuentra presionado
-            *
-            * @param button el boton a inspeccionar
-            *
-            * @return verdadero si se encuentra presionado
-            */
+            /// <summary>
+            /// Determina si un boton del mouse se encuentra presionado
+            /// </summary>
+            /// <param name="button">El boton a inspeccionar</param>
+            /// <returns>Verdadero si se encuentra presionado</returns>
             public Nullable<Point> GetMouseClicked(int button)
             {
                 lock (mouseClicks)
@@ -674,6 +638,7 @@ namespace rcr
                     mouseClicks[idx] = new Point(e.X, e.Y);
                 }
             }
+
             public void MousePressed(Object sender, MouseEventArgs e)
             {
                 lock (mouseButtons)
@@ -693,11 +658,11 @@ namespace rcr
             }
 
             // ------ fonts ------
-            /**
-            * Obtiene los tipos de letra del sistema
-            *
-            * @return los tipos de letra
-            */
+
+            /// <summary>
+            /// Obtiene los tipos de letra del sistema
+            /// </summary>
+            /// <returns>Los tipos de letra</returns>
             static public String[] GetSysFonts()
             {
                 List<String> sysfonts = new List<String>();
@@ -708,14 +673,13 @@ namespace rcr
                 return sysfonts.ToArray();
             }
 
-            /**
-            * Carga un tipo de letra para ser utilizado en el juego
-            *
-            * @param name   nombre interno a asignar
-            * @param fname  nombre del tipo de letra
-            * @param fstyle estilo del tipo de letra
-            * @param fsize  tamano del tipo de letra
-            */
+            /// <summary>
+            /// Carga un tipo de letra del sistema para ser utilizado en el juego
+            /// </summary>
+            /// <param name="name">El nombre interno a asignar</param>
+            /// <param name="fname">El nombre del tipo de letra</param>
+            /// <param name="fstyle">El estilo a aplicar</param>
+            /// <param name="fsize">El tamaño a asignar</param>
             public void LoadSysFont(String name, String fname, FontStyle fstyle, int fsize)
             {
                 FontFamily fontFamily = new FontFamily(fname);
@@ -723,14 +687,13 @@ namespace rcr
                 fonts.Add(name, font);
             }
 
-            /**
-            * Carga un tipo de letra True Type para ser utilizado en el juego
-            *
-            * @param name   nombre interno a asignar
-            * @param fname  nombre del archivo que contiene la fuente TTF
-            * @param fstyle estilo del tipo de letra
-            * @param fsize  tamano del tipo de letra
-            */
+            /// <summary>
+            /// Carga un tipo de letra TTF desde un archivo para ser utilizado en el juego
+            /// </summary>
+            /// <param name="name">El nombre interno a asignar</param>
+            /// <param name="fname">El nombre del archivo a cargar</param>
+            /// <param name="fstyle">El estilo a aplicar</param>
+            /// <param name="fsize">El tamaño a asignar</param>
             public void LoadTTFont(String name, String fname, FontStyle fstyle, int fsize)
             {
                 ttfFonts.AddFontFile(fname);
@@ -739,52 +702,45 @@ namespace rcr
                 fonts.Add(name, font);
             }
 
-            /**
-            * Recupera un tipo de letra previamente cargado
-            *
-            * @param fname el nombre del tipo de letra a recuperar
-            *
-            * @return el tipo de letra
-            */
+            /// <summary>
+            /// Recupera un tipo de letra previamente cargado
+            /// </summary>
+            /// <param name="name">El nombre del tipo de letra a recuperar</param>
+            /// <returns>El tipo de letra</returns>
             public Font GetFont(String name)
             {
                 return fonts[name];
             }
 
             // ------ images ------
-            /**
-            * Crea una imagen sin transparencia de dimensiones dadas
-            *
-            * @param width  ancho deseado
-            * @param height alto deseado
-            *
-            * @return la imagen creada
-            */
+
+            /// <summary>
+            /// Crea una imagen sin transparencia de dimensiones dadas
+            /// </summary>
+            /// <param name="width">El ancho de la imagen</param>
+            /// <param name="height">El alto de la imagen</param>
+            /// <returns>La imagen sin transparencia</returns>
             static protected internal Bitmap CreateOpaqueImage(int width, int height)
             {
                 return new Bitmap(width, height);
             }
 
-            /**
-            * Crea una imagen con transparencia de dimensiones dadas
-            *
-            * @param width  ancho deseado
-            * @param height alto deseado
-            *
-            * @return la imagen creada
-            */
+            /// <summary>
+            /// Crea una imagen con transparencia de dimensiones dadas
+            /// </summary>
+            /// <param name="width">El ancho de la imagen</param>
+            /// <param name="height">El alto de la imagen</param>
+            /// <returns>La imagen con transparencia</returns>
             static protected internal Bitmap CreateTranslucentImage(int width, int height)
             {
                 return new Bitmap(width, height);
             }
 
-            /**
-            * Recupera un grupo de imagenes previamente cargadas
-            *
-            * @param iname el nombre asignado al grupo de imagenes
-            *
-            * @return la imagenes
-            */
+            /// <summary>
+            /// Recupera un grupo de imagenes previamente cargadas
+            /// </summary>
+            /// <param name="iname">El nombre asignado al grupo de imagenes</param>
+            /// <returns>La lista de imagenes</returns>
             public Bitmap[] GetImages(String iname)
             {
                 return images[iname];
@@ -806,6 +762,13 @@ namespace rcr
                 }
             }
 
+            /// <summary>
+            /// Carga una imagen o grupo de imagenes
+            /// </summary>
+            /// <param name="iname">el nombre interno a asignar a las imagenes cargadas.</param>
+            /// <param name="pattern">El patron de archivos para las imagenes a cargar (glob)</param>
+            /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
+            /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
             public void LoadImage(String iname, String pattern, bool flipX, bool flipY)
             {
                 List<Bitmap> bitmaps = ReadImages(pattern);
@@ -816,6 +779,14 @@ namespace rcr
                 this.images.Add(iname, bitmaps.ToArray());
             }
 
+            /// <summary>
+            /// Carga una imagen o grupo de imagenes
+            /// </summary>
+            /// <param name="iname">el nombre interno a asignar a las imagenes cargadas.</param>
+            /// <param name="pattern">El patron de archivos para las imagenes a cargar (glob)</param>
+            /// <param name="size">Tamano a aplicar a la imagen</param>
+            /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
+            /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
             public void LoadImage(String iname, String pattern, Size size, bool flipX, bool flipY)
             {
                 List<Bitmap> bitmaps = ReadImages(pattern);
@@ -835,6 +806,14 @@ namespace rcr
                 this.images.Add(iname, bitmaps.ToArray());
             }
 
+            /// <summary>
+            /// Carga una imagen o grupo de imagenes
+            /// </summary>
+            /// <param name="iname">el nombre interno a asignar a las imagenes cargadas.</param>
+            /// <param name="pattern">El patron de archivos para las imagenes a cargar (glob)</param>
+            /// <param name="scale">Factor de escala de la imagen</param>
+            /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
+            /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
             public void LoadImage(String iname, String pattern, float scale, bool flipX, bool flipY)
             {
                 List<Bitmap> bitmaps = ReadImages(pattern);
@@ -856,14 +835,6 @@ namespace rcr
                 this.images.Add(iname, bitmaps.ToArray());
             }
 
-            /**
-            * Carga una imagen o grupo de imagenes acorde al nombre de archivo dado
-            *
-            * @param pattern patron de busqueda de el o los archivos. El caracter '*' es
-            *                usado como comodin
-            *
-            * @return la o las imagenes cargadas
-            */
             private List<Bitmap> ReadImages(String pattern)
             {
                 pattern = FixDirectorySeparatorChar(pattern);
@@ -890,13 +861,14 @@ namespace rcr
                 return bitmaps;
             }
 
-            protected String FixDirectorySeparatorChar( String path)
+            protected String FixDirectorySeparatorChar(String path)
             {
                 return path.Replace('/', Path.DirectorySeparatorChar);
             }
 
             // ------ FORM ------
-            protected override void  OnPaintBackground(PaintEventArgs e)
+
+            protected override void OnPaintBackground(PaintEventArgs e)
             {
                 lock (screen)
                 {

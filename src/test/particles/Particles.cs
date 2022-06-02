@@ -7,7 +7,7 @@ namespace test
 {
     namespace particles
     {
-        public class Particles : IEvents
+        public class Particles
         {
             private readonly LittleGameEngine lge;
             private Canvas panel;
@@ -20,7 +20,7 @@ namespace test
                 Size winSize = new Size(800, 440);
 
                 lge = new LittleGameEngine(winSize, "Particles", Color.White);
-                lge.SetOnMainUpdate(this);
+                lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
                 lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);

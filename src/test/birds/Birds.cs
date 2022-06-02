@@ -7,7 +7,7 @@ namespace test
 {
     namespace birds
     {
-        public class Birds : IEvents
+        public class Birds
         {
             private readonly LittleGameEngine lge;
 
@@ -17,7 +17,7 @@ namespace test
                 Size winSize = new Size(800, 440);
 
                 lge = new LittleGameEngine(winSize, "Birds", Color.White);
-                lge.SetOnMainUpdate(this);
+                lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
                 lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);

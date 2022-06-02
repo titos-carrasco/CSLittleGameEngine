@@ -4,23 +4,21 @@ namespace rcr
 {
     namespace lge
     {
-        /**
-        * La camara de Little Game Engine
-        *
-        * @author Roberto carrasco (titos.carrasco@gmail.com)
-        *
-        */
+        /// <summary>
+        /// La camara de Little Game Engine
+        /// <para>@author Roberto carrasco (titos.carrasco@gmail.com)</para>
+        /// </summary>
+        /// <seealso cref="rcr.lge.GameObject" />
         public class Camera : GameObject
         {
             protected internal GameObject target;
             protected internal bool targetInCenter;
 
-            /**
-            * Crea la camara en la posicion y dimensiones dadas.
-            *
-            * @param position coordenadas (x, y) de la posicion inicial de la camara
-            * @param size     dimension (width, height) de la camara
-            */
+            /// <summary>
+            /// Crea la camara en la posicion y dimensiones dadas
+            /// </summary>
+            /// <param name="position">Coordenadas (x, y) de la posicion inicial de la camara</param>
+            /// <param name="size">Dimension (width, height) de la camara</param>
             protected internal Camera(PointF position, SizeF size) :
                 base(position, size, "__LGE_CAMERA__")
             {
@@ -28,9 +26,9 @@ namespace rcr
                 targetInCenter = true;
             }
 
-            /**
-            * Mueve la camara segun se desplace su objetivo
-            */
+            ///<summary>
+            /// Mueve la camara segun se desplace su objetivo
+            ///</summary>
             protected internal void FollowTarget()
             {
                 // nadie a quien seguir

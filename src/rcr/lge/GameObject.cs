@@ -5,11 +5,10 @@ namespace rcr
 {
     namespace lge
     {
-        /**
-        * Objeto base del juego. En Little Game Engine casi todo es un GameObject
-        *
-        * @author Roberto carrasco (titos.carrasco@gmail.com)
-        */
+        /// <summary>
+        /// Objeto base del juego. En Little Game Engine casi todo es un GameObject
+        /// <para>@author Roberto carrasco(titos.carrasco @gmail.com)</para>
+        /// </summary>
         public class GameObject
         {
             protected internal RectangleF rect;
@@ -22,36 +21,33 @@ namespace rcr
             protected internal bool callOnCollision = false;
             protected internal int layer = -1;
 
-            /**
-            * Crea un objeto del juego
-            *
-            * @param origin posicion inicial (x,y) del GameObject
-            * @param size   dimension (ancho,alto) del GameObject
-            */
+            /// <summary>
+            /// Crea un objeto del juego
+            /// </summary>
+            /// <param name="origin">Posicion inicial (x,y) del GameObject</param>
+            /// <param name="size">Dimension (ancho,alto) del GameObject</param>
             public GameObject(PointF origin, SizeF size) :
                 this(origin.X, origin.Y, size.Width, size.Height, null)
             { }
 
-            /**
-            * Crea un objeto del juego
-            *
-            * @param origin posicion inicial (x,y) del GameObject
-            * @param size   dimension (ancho,alto) del GameObject
-            * @param name   nombre unico para este GameObject
-            */
+            /// <summary>
+            /// Crea un objeto del juego
+            /// </summary>
+            /// <param name="origin">Posicion inicial (x,y) del GameObject</param>
+            /// <param name="size">Dimension (ancho,alto) del GameObject.</param>
+            /// <param name="name">Nombre unico para este GameObject.</param>
             public GameObject(PointF origin, SizeF size, String name) :
                 this(origin.X, origin.Y, size.Width, size.Height, name)
             { }
 
-            /**
-            * Crea un objeto del juego
-            *
-            * @param x      posicion inicial en X del GameObject
-            * @param y      posicion inicial en X del GameObject
-            * @param Width  ancho del GameObject
-            * @param Height alto del GameObject
-            * @param name   nombre unico para este GameObject
-            */
+            /// <summary>
+            /// Crea un objeto del juego
+            /// </summary>
+            /// <param name="x">Posicion inicial en X del GameObject.</param>
+            /// <param name="y">Posicion inicial en X del GameObject</param>
+            /// <param name="width">Ancho del GameObject</param>
+            /// <param name="height">Alto del GameObject</param>
+            /// <param name="name">Nombre unico para este GameObject</param>
             public GameObject(float x, float y, float width, float height, String name)
             {
                 rect = new RectangleF(x, y, width, height);
@@ -61,111 +57,100 @@ namespace rcr
                 SetCollider(new RectangleF(0, 0, width, height));
             }
 
-            /**
-            * Retorna la posicion de este objeto
-            *
-            * @return la posicion
-            */
+            /// <summary>
+            /// Retorna la posicion de este objeto
+            /// </summary>
+            /// <returns>La posicion</returns>
             public PointF GetPosition()
             {
                 return new PointF(rect.X, rect.Y);
             }
 
-            /**
-            * Obtiene la coordenada X del GameObjec
-            *
-            * @return la coordenada X
-            */
+            /// <summary>
+            /// Obtiene la coordenada X del GameObject
+            /// </summary>
+            /// <returns>La coordenada X</returns>
             public float GetX()
             {
                 return rect.X;
             }
 
-            /**
-            * Obtiene la coordenada Y del GameObject
-            *
-            * @return la coordenada Y
-            */
+            /// <summary>
+            /// Obtiene la coordenada Y del GameObject
+            /// </summary>
+            /// <returns>La coordenada Y</returns>
             public float GetY()
             {
                 return rect.Y;
             }
 
-            /**
-            * Retorna la dimension de este objeto
-            *
-            * @return la dimension
-            */
+            /// <summary>
+            /// Obtiene la dimension de este objeto
+            /// </summary>
+            /// <returns>La dimension</returns>
             public SizeF GetSize()
             {
                 return new SizeF(rect.Width, rect.Height);
             }
 
-            /**
-            * Retorna el ancho de este objeto
-            *
-            * @return el ancho
-            */
+            /// <summary>
+            /// Obtiene el ancho de este objeto
+            /// </summary>
+            /// <returns>El ancho</returns>
             public float GetWidth()
             {
                 return rect.Width;
             }
 
-            /**
-            * Retorna el alto de este objeto
-            *
-            * @return el alto
-            */
+            /// <summary>
+            /// Obtiene el alto de este objeto
+            /// </summary>
+            /// <returns>El alto</returns>
             public float GetHeight()
             {
                 return rect.Height;
             }
 
-            /**
-            * Retorna una copia del rectangulo que rodea a este objeto
-            *
-            * @return el rectangulo
-            */
+            /// <summary>
+            /// Obtiene una copia del rectangulo que rodea a este objeto
+            /// </summary>
+            /// <returns>El rectangulo</returns>
             public RectangleF GetRectangle()
             {
                 return new RectangleF(GetPosition(), GetSize());
             }
 
-            /**
-            * Retorna el nombre de este objeto
-            *
-            * @return el nombre
-            */
+            /// <summary>
+            /// Obtiene el nombre de este objeto
+            /// </summary>
+            /// <returns>El nombre</returns>
             public String GetName()
             {
                 return name;
             }
 
-            /**
-            * Retorna el layer de este objeto
-            *
-            * @return el layer
-            */
+            /// <summary>
+            /// Obtiene el numero de capa de este objeto
+            /// </summary>
+            /// <returns>El numero de capa</returns>
             public int GetLayer()
             {
                 return layer;
             }
 
-            /**
-            * Retorna el TAG de este objeto
-            *
-            * @return el tag
-            */
+            /// <summary>
+            /// Obtiene el tag de este objeto
+            /// </summary>
+            /// <returns>El tag</returns>
             public String GetTag()
             {
                 return tag;
             }
 
-            /**
-            * Retorna el colisionador de este objeto
-            *
-            * @return los rectangulos que definen su colisionador
-            */
+            /// <summary>
+            /// Obtiene el colisionador de este objeto.
+            /// </summary>
+            /// <returns>Un arreglo de rectangulos que definen al colisionador</returns>
             public RectangleF[] GetCollider()
             {
                 int l = collider.Length;
@@ -181,32 +166,29 @@ namespace rcr
                 return rects;
             }
 
-            /**
-            * Establece el rectangulo que limita el movimiento de este objeto
-            *
-            * @param bounds el rectangulo en donde se permitira mover al objeto
-            */
+            /// <summary>
+            /// Establece un rectangulo que limita el movimiento de este objeto
+            /// </summary>
+            /// <param name="bounds">El rectangulo en donde se permitira mover al objeto</param>
             public void SetBounds(RectangleF bounds)
             {
                 this.bounds = new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height);
             }
 
-            /**
-            * Establece la posicion de este objeto
-            *
-            * @param position la posicion (x, y)
-            */
+            /// <summary>
+            /// Establece la posicion de este objeto
+            /// </summary>
+            /// <param name="position">La posicion (x, y)</param>
             public void SetPosition(PointF position)
             {
                 SetPosition(position.X, position.Y);
             }
 
-            /**
-            * Establece la posicion de este objeto
-            *
-            * @param x la cordenada x
-            * @param y la coordenada y
-            */
+            /// <summary>
+            /// Establece la posicion de este objeto
+            /// </summary>
+            /// <param name="x">La coordenada X</param>
+            /// <param name="y">La xcoordenada Y</param>
             public void SetPosition(float x, float y)
             {
                 rect.X = x;
@@ -230,31 +212,28 @@ namespace rcr
                 }
             }
 
-            /**
-            * Establece el TAG para este objeto
-            *
-            * @param tag el tag a asignar
-            */
+            /// <summary>
+            /// Establece el tag de esxte objeto
+            /// </summary>
+            /// <param name="tag">El tag a asignar</param>
             public void SetTag(String tag)
             {
                 this.tag = new String(tag);
             }
 
-            /**
-            * Establece el colisionador para este objeto
-            *
-            * @param rect el rectangulo que define la zona de colision
-            */
+            /// <summary>
+            /// Establece el colisionador para este objeto
+            /// </summary>
+            /// <param name="rect">El rectangulo que define la zona de colision</param>
             public void SetCollider(RectangleF rect)
             {
                 collider = new RectangleF[] { new RectangleF(rect.X, rect.Y, rect.Width, rect.Height) };
             }
 
-            /**
-            * Establece el colisionador para este objeto
-            *
-            * @param rects los rectangulos que definen la zona de colision
-            */
+            /// <summary>
+            /// Establece el colisionador para este objeto
+            /// </summary>
+            /// <param name="rects">Los rectangulos que definen la zona de colision.</param>
             public void SetCollider(RectangleF[] rects)
             {
                 int l = rects.Length;
@@ -266,24 +245,22 @@ namespace rcr
                 }
             }
 
-            /**
-            * Establece si este objeto participara o no del procesamiento de colisiones
-            *
-            * @param useColliders si es verdadero participara del procesamiento de
-            *                     colisiones
-            */
+            /// <summary>
+            /// Establece si este objeto participara o no del procesamiento de colisiones
+            /// </summary>
+            /// <param name="useColliders">Si es verdadero participara del procesamiento de colisiones</param>
+            /// <param name="oncollision">Si es verdadero se invocara al metodo OnCollision al detectar una colision</param>
             public void EnableCollider(bool useColliders, bool oncollision = false)
             {
                 this.useColliders = useColliders;
                 this.callOnCollision = oncollision;
             }
 
-            /**
-            * Determina si un GameObject colisiona con otro
-            *
-            * @param gobj el gobject a comparar
-            * @return Verdadero si colisiona con el GameObject especificado
-            */
+            /// <summary>
+            /// Determina si este GameObject colisiona con otro
+            /// </summary>
+            /// <param name="gobj">El GameObject a procesar</param>
+            /// <returns>Verdadero si colisiona con el GameObject especificado</returns>
             public bool CollidesWith(GameObject gobj)
             {
                 if (layer == gobj.layer)
@@ -296,81 +273,67 @@ namespace rcr
 
             // manejo de eventos
 
-            /**
-            * Es invocada en el siguiente ciclo para todos los
-            * GameObjects marcados para eliminacion
-            */
+            /// <summary>
+            /// Invocada en el siguiente ciclo para todos los GameObjects marcados para eliminacion
+            /// </summary>
             virtual public void OnDelete()
             {
             }
 
-            /**
-            * Es invocada en el siguiente ciclo para todos los
-            * GameObjects recien creados
-            */
+            /// <summary>
+            /// Invocada en el siguiente ciclo para todos los GameObjects recien creados
+            /// </summary>
             virtual public void OnStart()
             {
             }
 
-            /**
-            * Es invocada en el siguiente ciclo para todos los
-            * GameObjects previo al evento onUpdate()
-            *
-            * @param dt tiempo en segundos desde el ultimo ciclo
-            */
+            /// <summary>
+            /// Invocada en el siguiente ciclo para todos los GameObjects previo al evento OnUpdate()
+            /// </summary>
+            /// <param name="dt">Tiempo en segundos desde el ultimo ciclo</param>
             virtual public void OnPreUpdate(float dt)
             {
             }
 
-            /**
-            * Es invocada en el siguiente ciclo para todos los
-            * GameObjects previo al evento onPostUpdate()
-            *
-            * @param dt tiempo en segundos desde el ultimo ciclo
-            */
+            /// <summary>
+            /// Invocada en el siguiente ciclo para todos los GameObjects previo al evento OnPostUpdate()
+            /// </summary>
+            /// <param name="dt">Tiempo en segundos desde el ultimo ciclo</param>
             virtual public void OnUpdate(float dt)
             {
             }
 
-            /**
-            * Es en el siguiente ciclo para todos los
-            * GameObjects previo al evento onCollision()
-            *
-            * @param dt tiempo en segundos desde el ultimo ciclo
-            */
+            /// <summary>
+            /// Invocada en el siguiente ciclo para todos los GameObjects previo al evento OnCollision()
+            /// </summary>
+            /// <param name="dt">Tiempo en segundos desde el ultimo ciclo</param>
             virtual public void OnPostUpdate(float dt)
             {
             }
 
-            /**
-            * Es invocada en el siguiente ciclo para todos los
-            * GameObjects previo al evento onPreRender()
-            *
-            * @param dt tiempo en segundos desde el ultimo ciclo
-            * @param gobjs los GameObjects que colisionan co este GameObject
-            */
+            /// <summary>
+            /// Invocada en el siguiente ciclo para todos los GameObjects previo al evento OnPreRender()
+            /// </summary>
+            /// <param name="dt">Tiempo en segundos desde el ultimo ciclo</param>
+            /// <param name="gobjs">Los GameObjects que colisionan con este GameObject</param>
             virtual public void OnCollision(float dt, GameObject[] gobjs)
             {
             }
 
-            /**
-            * Es invocada en el siguiente ciclo para todos los
-            * GameObjects previo al rendering del juego en pantalla
-            *
-            * @param dt tiempo en segundos desde el ultimo ciclo
-            */
+            /// <summary>
+            /// Invocada en el siguiente ciclo para todos los GameObjects previo al rendering del juego en pantalla
+            /// </summary>
+            /// <param name="dt">Tiempo en segundos desde el ultimo ciclo</param>
             virtual public void OnPreRender(float dt)
             {
             }
 
-            /**
-            * Es invocada para todos los GameObjects justo antes de
-            * finalizar el game loop
-            */
+            /// <summary>
+            /// Es invocada para todos los GameObjects justo antes de finalizar el game loop
+            /// </summary>
             virtual public void OnQuit()
             {
             }
-
         }
     }
 }

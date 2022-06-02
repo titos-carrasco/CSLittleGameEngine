@@ -7,7 +7,7 @@ namespace test
 {
     namespace cementerio
     {
-        public class Game : IEvents
+        public class Game
         {
             private readonly LittleGameEngine lge;
 
@@ -16,7 +16,7 @@ namespace test
                 Size winSize = new Size(640, 342);
 
                 lge = new LittleGameEngine(winSize, "El Cementerio", Color.Black);
-                lge.SetOnMainUpdate(this);
+                lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
                 lge.LoadImage("fondo", resourceDir + "/fondo.png", false, false);

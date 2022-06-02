@@ -6,43 +6,38 @@ namespace rcr
 {
     namespace lge
     {
-        /**
-        * GameObject para trazar formas en Little Game Engine
-        *
-        * @author Roberto carrasco (titos.carrasco@gmail.com)
-        *
-        */
+        /// <summary>
+        /// GameObject para trazar formas en Little Game Engine
+        /// <para>@author Roberto carrasco (titos.carrasco@gmail.com)</para>
+        /// </summary>
+        /// <seealso cref="rcr.lge.GameObject" />
         public class Canvas : GameObject
         {
-
-            /**
-            * Crea un canvas, para dibujar, en la posicion y dimensiones dadas
-            *
-            * @param origin posicion (x, y) del canvas
-            * @param size   dimension (width, height) del canvas
-            */
+            /// <summary>
+            /// Crea un canvas, para dibujar, en la posicion y dimensiones dadas
+            /// </summary>
+            /// <param name="origin">Posicion (x, y) del canvas</param>
+            /// <param name="size">Dimension (width, height) del canvas</param>
             public Canvas(PointF origin, SizeF size) :
                 this(origin, size, null)
             { }
 
-            /**
-            * Crea un canvas, para dibujar, en la posicion y dimensiones dadas
-            *
-            * @param origin posicion (x, y) del canvas
-            * @param size   dimension (width, height) del canvas
-            * @param name   nombre para esta GameObject
-            */
+            /// <summary>
+            /// Crea un canvas, para dibujar, en la posicion y dimensiones dadas
+            /// </summary>
+            /// <param name="origin">posicion (x, y) del canvas</param>
+            /// <param name="size">dimension (width, height) del canvas</param>
+            /// <param name="name">nombre unico para este GameObject</param>
             public Canvas(PointF origin, SizeF size, String name) :
                 base(origin, size, name)
             {
                 surface = LittleGameEngine.CreateTranslucentImage((int)size.Width, (int)size.Height);
             }
 
-            /**
-            * Colorea el canvas con el color especificado
-            *
-            * @param color el color de relleno
-            */
+            /// <summary>
+            /// Colorea el canvas con el color especificado
+            /// </summary>
+            /// <param name="color">color el color de relleno.</param>
             public void Fill(Color color)
             {
                 Graphics g = Graphics.FromImage(surface);
@@ -50,18 +45,13 @@ namespace rcr
                 g.Dispose();
             }
 
-            /**
-            *
-            * Traza un texto en este canvas en la posicion, tipo de letra y color
-            * especificados
-            *
-            * @param text     el texto a trazar
-            * @param position coordenada (x, y) en donde se trazara el texto dentro del
-            *                 canvas (linea base del texto)
-            * @param fname    nombre del font (cargado con LoadFont) a utilizar para trazar
-            *                 el texto
-            * @param color    color a utilizar (r,g,b) para trazar el texto
-            */
+            /// <summary>
+            /// Traza un texto en este canvas en la posicion, tipo de letra y color
+            /// </summary>
+            /// <param name="text">El texto a trazar</param>
+            /// <param name="position">Coordenada (x, y) en donde se trazara el texto dentro del canvas (linea base del texto).</param>
+            /// <param name="fname">Nombre del font (cargado con LoadFont) a utilizar para trazar el texto.</param>
+            /// <param name="color">Color a utilizar (r,g,b) para trazar el texto</param>
             public void DrawText(String text, PointF position, String fname, Color color)
             {
                 LittleGameEngine lge = LittleGameEngine.GetInstance();
@@ -77,13 +67,11 @@ namespace rcr
                 g.Dispose();
             }
 
-            /**
-            * Traza un punto en este canvas en la posicion y color especificados
-            *
-            * @param position coordenada (x, y) en donde se trazara el punto dentro del
-            *                 canvas
-            * @param color    color a utilizar (r,g,b) para trazar el punto
-            */
+            /// <summary>
+            /// Traza un punto en este canvas en la posicion y color especificados
+            /// </summary>
+            /// <param name="position">Coordenada (x, y) en donde se trazara el punto dentro del canvas</param>
+            /// <param name="color">Color a utilizar (r,g,b) para trazar el punto.</param>
             public void DrawPoint(PointF position, Color color)
             {
                 int x = (int)position.X;
@@ -98,15 +86,13 @@ namespace rcr
                 g.Dispose();
             }
 
-            /**
-            * Traza un circulo en este canvas en la posicion, de radio y color especificado
-            *
-            * @param position  coordenada (x, y) en donde se trazara el circulo dentro del
-            *                  canvas
-            * @param radius    radio del circulo a trazar
-            * @param color     color a utilizar (r,g,b) para trazar el circulo
-            * @param thickness si es verdadero se mostrara el borde del circulo
-            */
+            /// <summary>
+            /// Traza un circulo en este canvas en la posicion, de radio y color especificado
+            /// </summary>
+            /// <param name="position">Coordenada (x, y) en donde se trazara el circulo dentro del canvas</param>
+            /// <param name="radius">Radio del circulo a trazar.</param>
+            /// <param name="color">Color a utilizar (r,g,b) para trazar el circulo.</param>
+            /// <param name="thickness">Si es verdadero se mostrara el borde del circulo.</param>
             public void DrawCircle(PointF position, float radius, Color color, bool thickness)
             {
                 int x = (int)position.X;
@@ -126,16 +112,13 @@ namespace rcr
                 g.Dispose();
             }
 
-            /**
-            * Traza un rectangulo en este canvas en la posicion, dimensiones y color
-            * especificado
-            *
-            * @param position  coordenada (x, y) en donde se trazara el circulo dentro del
-            *                  canvas
-            * @param size      dimension (width, height) del rectangulo
-            * @param color     color a utilizar (r,g,b) para trazar el rectangulo
-            * @param thickness si es True se mostrara el borde del rectangulo
-            */
+            /// <summary>
+            /// Traza un rectangulo en este canvas en la posicion, dimensiones y color especificado
+            /// </summary>
+            /// <param name="position">Coordenada (x, y) en donde se trazara el circulo dentro del canvas.</param>
+            /// <param name="size">Dimension (width, height) del rectangulo</param>
+            /// <param name="color">Color a utilizar (r,g,b) para trazar el rectangulo</param>
+            /// <param name="thickness">Si es True se mostrara el borde del rectangulo</param>
             public void DrawRectangle(PointF position, SizeF size, Color color, bool thickness)
             {
                 int x = (int)position.X;
@@ -155,13 +138,11 @@ namespace rcr
                 g.Dispose();
             }
 
-            /**
-            * Traza una superficie en este canvas en la posicion dada
-            *
-            * @param position coordenada (x, y) en donde se trazara la superfice dentro del
-            *                 canvas
-            * @param surface  superficie (imagen) a trazar
-            */
+            /// <summary>
+            /// Traza una superficie en este canvas en la posicion dada
+            /// </summary>
+            /// <param name="position">Coordenada (x, y) en donde se trazara la superfice dentro del canvas</param>
+            /// <param name="surface">Superficie (imagen) a trazar</param>
             public void DrawSurface(PointF position, Bitmap surface)
             {
                 int x = (int)position.X;

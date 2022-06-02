@@ -9,7 +9,7 @@ namespace test
     {
         namespace demo01
         {
-            public class TheWorld : IEvents
+            public class TheWorld
             {
                 private readonly LittleGameEngine lge;
 
@@ -19,7 +19,7 @@ namespace test
                     Size winSize = new Size(800, 440);
 
                     lge = new LittleGameEngine(winSize, "The World", Color.White);
-                    lge.SetOnMainUpdate(this);
+                    lge.onMainUpdate = OnMainUpdate;
                     //lge.ShowColliders(Color.Red);
 
                     // cargamos los recursos que usaremos

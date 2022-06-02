@@ -9,7 +9,7 @@ namespace test
     {
         namespace demo03
         {
-            public class MovePlayer : IEvents
+            public class MovePlayer
             {
                 private readonly LittleGameEngine lge;
 
@@ -19,7 +19,7 @@ namespace test
                     Size winSize = new Size(640, 480);
 
                     lge = new LittleGameEngine(winSize, "Move Player", Color.White);
-                    lge.SetOnMainUpdate(this);
+                    lge.onMainUpdate = OnMainUpdate;
 
                     // cargamos los recursos que usaremos
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);

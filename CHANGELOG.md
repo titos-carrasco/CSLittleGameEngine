@@ -1,5 +1,10 @@
 # Changelog
 
+## 2022-06-01
+- Agrega documentación en el código
+- Modifica OnMainUpdate() y la convierte en variable pública eliminando IEvents
+- Ajusta demos acorde a lo anterior
+
 ## 2022-05-29
 - Corrige errror en la salida del Game Loop
 - Formatea archivos
@@ -8,7 +13,7 @@
 
 ## 2022-05-28
 - Se migró todo el código de Java a C#
-- Pendientes Sonidos y archicos TTF
+- Pendientes Sonidos y archivos TTF
 - Revisar en Windows
 
 ## 2022-05-28

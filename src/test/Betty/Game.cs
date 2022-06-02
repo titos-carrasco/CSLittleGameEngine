@@ -7,7 +7,7 @@ namespace test
 {
     namespace betty
     {
-        public class Game : IEvents
+        public class Game
         {
             private readonly LittleGameEngine lge;
 
@@ -19,7 +19,7 @@ namespace test
                 Size winSize = new Size(608, 736);
 
                 lge = new LittleGameEngine(winSize, "Betty", Color.White);
-                lge.SetOnMainUpdate(this);
+                lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
                 lge.LoadImage("fondo", resourceDir + "/images/Betty/Fondo.png", false, false);
