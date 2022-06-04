@@ -213,12 +213,12 @@ namespace rcr
             }
 
             /// <summary>
-            /// Establece el tag de esxte objeto
+            /// Establece el tag de este objeto
             /// </summary>
             /// <param name="tag">El tag a asignar</param>
             public void SetTag(String tag)
             {
-                this.tag = new String(tag);
+                this.tag = tag;
             }
 
             /// <summary>

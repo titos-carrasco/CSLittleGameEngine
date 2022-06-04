@@ -733,7 +733,7 @@ namespace rcr
             public void LoadTTFont(String name, String fname, FontStyle fstyle, int fsize)
             {
                 ttfFonts.AddFontFile(fname);
-                FontFamily fontFamily = new FontFamily(ttfFonts.Families[^1].Name, ttfFonts);
+                FontFamily fontFamily = new FontFamily(ttfFonts.Families[ttfFonts.Families.Length - 1].Name, ttfFonts);
                 Font font = new Font(fontFamily, fsize, fstyle);
                 fonts.Add(name, font);
             }
@@ -784,18 +784,10 @@ namespace rcr
 
             static private void FlipImage(Bitmap bitmap, bool flipX, bool flipY)
             {
-                if (flipX && flipY)
-                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipXY);
-                else if (flipX)
-                {
-                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
-                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                }
-                else if (flipY)
-                {
-                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipY);
-                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                }
+                if (flipX)
+                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                if (flipY)
+                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
             }
 
             /// <summary>
@@ -830,13 +822,13 @@ namespace rcr
                 for (int i = 0; i < nimages; i++)
                 {
                     Bitmap b = bitmaps[i];
+                    FlipImage(b, flipX, flipY);
                     Bitmap bmp = new Bitmap(size.Width, size.Height);
 
                     Graphics g = Graphics.FromImage(bmp);
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                     g.DrawImage(b, 0, 0, size.Width, size.Height);
                     g.Dispose();
-                    FlipImage(bmp, flipX, flipY);
                     bitmaps[i] = bmp;
                 }
                 this.images.Add(iname, bitmaps.ToArray());
@@ -857,6 +849,7 @@ namespace rcr
                 for (int i = 0; i < nimages; i++)
                 {
                     Bitmap b = bitmaps[i];
+                    FlipImage(b, flipX, flipY);
                     int width = (int)Math.Round(b.Width * scale);
                     int height = (int)Math.Round(b.Height * scale);
                     Bitmap bmp = new Bitmap(width, height);
@@ -865,7 +858,6 @@ namespace rcr
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                     g.DrawImage(b, 0, 0, width, height);
                     g.Dispose();
-                    FlipImage(bmp, flipX, flipY);
                     bitmaps[i] = bmp;
                 }
                 this.images.Add(iname, bitmaps.ToArray());
