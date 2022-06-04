@@ -13,7 +13,8 @@ namespace test
             {
                 private LittleGameEngine lge;
 
-                public Colliders(String resourceDir) {
+                public Colliders(String resourceDir)
+                {
                     // creamos el juego
                     Size winSize = new Size(640, 480);
 
@@ -28,7 +29,7 @@ namespace test
                     lge.LoadImage("heroe_run_right", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, false, false);
                     lge.LoadImage("heroe_run_left", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, true, false);
                     lge.LoadImage("ninja", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
-                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
+                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -40,7 +41,7 @@ namespace test
 
                     // agregamos un ninja
                     Sprite ninja = new Sprite("ninja", new PointF(350, 720), "ninja");
-                    ninja.EnableCollider(true,true);
+                    ninja.EnableCollider(true, true);
                     ninja.SetCollider(new RectangleF[] { new RectangleF(36, 8, 36, 36), new RectangleF(28, 44, 44, 36) });
                     lge.AddGObject(ninja, 1);
 
@@ -55,7 +56,8 @@ namespace test
                     lge.SetCameraTarget(heroe, false);
                 }
 
-                public void OnMainUpdate(float dt) {
+                public void OnMainUpdate(float dt)
+                {
                     // abortamos con la tecla Escape
                     if (lge.KeyPressed(Keys.Escape))
                         lge.Quit();
@@ -64,8 +66,9 @@ namespace test
                     Point mousePosition = lge.GetMousePosition();
                     bool[] mouseButtons = lge.GetMouseButtons();
 
-                    String info = String.Format("FPS: {0,-6:f} - gObjs: {1} - Mouse: ({2},{3}) ({4},{5},{6})",
+                    String info = String.Format("FPS: {0,-6:f} - LPS: {1,-6:f} - gObjs: {2} - Mouse: ({3},{4}) ({5},{6},{7})",
                                                 lge.GetFPS(),
+                                                lge.GetLPS(),
                                                 lge.GetCountGObjects(),
                                                 mousePosition.X, mousePosition.Y,
                                                 mouseButtons[0] ? 1 : 0,
@@ -74,16 +77,18 @@ namespace test
                                         );
                     Canvas infobar = (Canvas)lge.GetGObject("infobar");
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
-                    infobar.DrawText(info, new PointF(100, 0), "monospace", Color.Black);
+                    infobar.DrawText(info, new PointF(40, 3), "monospace", Color.Black);
                 }
 
                 // main loop
-                public void Run(int fps) {
+                public void Run(int fps)
+                {
                     lge.Run(fps);
                 }
 
                 // show time
-                public static void Main(String[] args) {
+                public static void Main()
+                {
                     Colliders game = new Colliders(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");

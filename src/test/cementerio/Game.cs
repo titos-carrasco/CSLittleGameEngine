@@ -81,7 +81,7 @@ namespace test
             }
 
             // show time
-            public static void Main(String[] args)
+            public static void Main()
             {
                 Game game = new Game(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\cementerio\resources");
                 game.Run(60);

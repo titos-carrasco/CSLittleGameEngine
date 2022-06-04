@@ -1,19 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<LangVersion>6</LangVersion>
-		<UseWindowsForms>true</UseWindowsForms>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Configuration>Release</Configuration>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
+        <ImplicitUsings>disable</ImplicitUsings>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\rcr\lge\lge.csproj" />
-		<Reference Include="lge">
-			<HintPath>../../rcr/lge/lge.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\rcr\lge\lge.csproj" />
+    </ItemGroup>
 
 </Project>

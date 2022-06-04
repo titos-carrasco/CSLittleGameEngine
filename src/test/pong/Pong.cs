@@ -11,7 +11,7 @@ namespace test
         public class Pong
         {
             private readonly LittleGameEngine lge;
-            private int paddleSpeed = 240;
+            private readonly int paddleSpeed = 240;
 
             public Pong()
             {
@@ -19,11 +19,11 @@ namespace test
                 Size winSize = new Size(640, 640);
 
                 lge = new LittleGameEngine(winSize, "Ping", Color.Black);
-                lge.onMainUpdate=OnMainUpdate;
+                lge.onMainUpdate = OnMainUpdate;
                 // lge.ShowColliders(Color.Red);
 
                 // cargamos los recursos que usaremos
-                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
+                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                 // agregamos la barra de info
                 Canvas infobar = new Canvas(new PointF(0, 0), new Size(640, 20), "infobar");
@@ -88,8 +88,9 @@ namespace test
                 Point mousePosition = lge.GetMousePosition();
                 bool[] mouseButtons = lge.GetMouseButtons();
 
-                String info = String.Format("FPS: {0,-6:f} - gObjs: {1} - Mouse: ({2},{3}) ({4},{5},{6})",
+                String info = String.Format("FPS: {0,-6:f} - LPS: {1,-6:f} - gObjs: {2} - Mouse: ({3},{4}) ({5},{6},{7})",
                                             lge.GetFPS(),
+                                            lge.GetLPS(),
                                             lge.GetCountGObjects(),
                                             mousePosition.X, mousePosition.Y,
                                             mouseButtons[0] ? 1 : 0,
@@ -97,8 +98,8 @@ namespace test
                                             mouseButtons[2] ? 1 : 0
                                     );
                 Canvas infobar = (Canvas)lge.GetGObject("infobar");
-                infobar.Fill(Color.FromArgb(0x80, 0x80, 0x80, 0x80));
-                infobar.DrawText(info, new PointF(100, 0), "monospace", Color.White);
+                infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
+                infobar.DrawText(info, new PointF(40, 3), "monospace", Color.White);
 
                 // user paddle
                 Canvas userPaddle = (Canvas)lge.GetGObject("user-paddle");
@@ -124,9 +125,9 @@ namespace test
                 float ph = systemPaddle.GetHeight();
 
                 if (py + ph / 2.0 < by)
-                    py = py + speed;
+                    py += speed;
                 else if (py + ph / 2.0 > by)
-                    py = py - speed;
+                    py -= speed;
                 systemPaddle.SetPosition(px, py);
             }
 
@@ -137,7 +138,7 @@ namespace test
             }
 
             // show time
-            public static void Main(String[] args)
+            public static void Main()
             {
                 Pong game = new Pong();
                 game.Run(60);

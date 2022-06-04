@@ -26,7 +26,7 @@ namespace test
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
                     lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
                     lge.LoadSysFont("banner", "Comic Sans MS", FontStyle.Regular, 30);
-                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 12);
+                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0));
@@ -57,8 +57,9 @@ namespace test
                     Point mousePosition = lge.GetMousePosition();
                     bool[] mouseButtons = lge.GetMouseButtons();
 
-                    String info = String.Format("FPS: {0,-6:f} - gObjs: {1} - Mouse: ({2},{3}) ({4},{5},{6})",
+                    String info = String.Format("FPS: {0,-6:f} - LPS: {1,-6:f} - gObjs: {2} - Mouse: ({3},{4}) ({5},{6},{7})",
                                                 lge.GetFPS(),
+                                                lge.GetLPS(),
                                                 lge.GetCountGObjects(),
                                                 mousePosition.X, mousePosition.Y,
                                                 mouseButtons[0] ? 1 : 0,
@@ -67,7 +68,7 @@ namespace test
                                         );
                     Canvas infobar = (Canvas)lge.GetGObject("infobar");
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
-                    infobar.DrawText(info, new PointF(140, 0), "monospace", Color.Black);
+                    infobar.DrawText(info, new PointF(40, 3), "monospace", Color.Black);
 
                     // animamos al heroe
                     Sprite heroe = (Sprite)lge.GetGObject("Heroe");

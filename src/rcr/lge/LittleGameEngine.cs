@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -31,7 +32,9 @@ namespace rcr
             private readonly Size winSize;
             private readonly float[] fpsData;
             private int fpsIdx;
-            private bool running = false;
+            private readonly float[] lpsData;
+            private int lpsIdx;
+            private volatile bool running = false;
 
             public Action<float> onMainUpdate = null;
             private readonly Dictionary<Keys, bool> keysPressed;
@@ -42,9 +45,11 @@ namespace rcr
             private readonly Dictionary<String, Font> fonts;
             private readonly PrivateFontCollection ttfFonts;
 
-            private readonly Bitmap screen;
             private readonly Color bgColor;
             private Nullable<Color> collidersColor = null;
+
+            private readonly Bitmap screen;
+            private readonly Stopwatch screenSpeed;
 
             // ------ game engine ------
 
@@ -63,8 +68,10 @@ namespace rcr
                 lge = this;
                 this.winSize = winSize;
 
-                fpsData = new float[30];
+                fpsData = new float[10];
                 fpsIdx = 0;
+                lpsData = new float[10];
+                lpsIdx = 0;
 
                 this.bgColor = bgColor;
 
@@ -81,6 +88,7 @@ namespace rcr
 
                 camera = new Camera(new PointF(0, 0), winSize);
 
+                screenSpeed = new Stopwatch();
                 screen = CreateOpaqueImage(winSize.Width, winSize.Height);
                 Graphics g = Graphics.FromImage(screen);
                 g.Clear(bgColor);
@@ -89,12 +97,19 @@ namespace rcr
                 this.MouseDown += MousePressed;
                 this.MouseUp += MouseReleased;
                 this.MouseClick += MouseClicked;
+
                 this.Text = title;
                 this.FormBorderStyle = FormBorderStyle.Fixed3D;
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
                 this.AutoSize = true;
                 this.ClientSize = winSize;
+                this.DoubleBuffered = true;
+
+                this.SetStyle(ControlStyles.UserPaint, true);
+                this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+                this.SetStyle(ControlStyles.Opaque, true);
+
                 this.Show();
 
                 Application.DoEvents();
@@ -113,15 +128,34 @@ namespace rcr
             }
 
             /// <summary>
-            /// Obtiene los FPS calculados como el promedio de los ultimos 30 valores
+            /// Obtiene los FPS calculados como el promedio de los ultimos valores
             /// </summary>
             /// <returns>Los frame por segundo calculados</returns>
             public float GetFPS()
             {
                 float dt = 0;
-                foreach (float val in fpsData)
-                    dt += val;
-                dt /= fpsData.Length;
+                lock (fpsData)
+                {
+                    foreach (float val in fpsData)
+                        dt += val;
+                    dt /= fpsData.Length;
+                }
+                return dt == 0 ? 0 : 1.0f / dt;
+            }
+
+            /// <summary>
+            /// Obtiene los LPS (Loops per Seconds) del GameLoop calculados como el promedio de los ultimos valores
+            /// </summary>
+            /// <returns>Los ciclos por segundo del GameLoop</returns>
+            public float GetLPS()
+            {
+                float dt = 0;
+                lock (lpsData)
+                {
+                    foreach (float val in lpsData)
+                        dt += val;
+                    dt /= lpsData.Length;
+                }
                 return dt == 0 ? 0 : 1.0f / dt;
             }
 
@@ -139,10 +173,7 @@ namespace rcr
             /// </summary>
             public void Quit()
             {
-                lock (this)
-                {
-                    running = false;
-                }
+                running = false;
             }
 
             /// <summary>
@@ -163,31 +194,32 @@ namespace rcr
             /// <param name="fps">Los FPS a mantener</param>
             private void TRun(int fps)
             {
+                screenSpeed.Start();
                 Bitmap screenImage = CreateOpaqueImage(winSize.Width, winSize.Height);
-                running = true;
-                long tickExpected = TimeSpan.TicksPerSecond / fps;
-                long tickPrev = DateTime.Now.Ticks;
-                while (true)
-                {
-                    lock (this)
-                    {
-                        if (!running)
-                            break;
-                    }
 
+                long tExpected = 1000 / fps;
+
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                running = true;
+                while (running)
+                {
                     // los eventos son atrapados por los listener
 
-                    // --- tiempo en ms desde el ciclo anterior
-                    long tickElapsed = DateTime.Now.Ticks - tickPrev;
-                    if (tickElapsed < tickExpected)
-                        Thread.Sleep((int)((tickExpected - tickElapsed) / TimeSpan.TicksPerMillisecond));
+                    // --- nos ajustamos a 1/fps
+                    while (stopwatch.ElapsedMilliseconds < tExpected) ;
 
-                    long now = DateTime.Now.Ticks;
-                    float dt = (now - tickPrev) / (float)TimeSpan.TicksPerSecond;
-                    tickPrev = now;
+                    // --- tiempo desde el ciclo anterior
+                    float dt = stopwatch.ElapsedMilliseconds / 1000.0f;
+                    stopwatch.Restart();
 
-                    fpsData[fpsIdx++] = dt;
-                    fpsIdx %= fpsData.Length;
+                    // los LPS
+                    lock (lpsData)
+                    {
+                        lpsData[lpsIdx++] = dt;
+                        lpsIdx %= lpsData.Length;
+                    }
 
                     // --- Del gobj and gobj.OnDelete
                     List<GameObject> ondelete = new List<GameObject>();
@@ -312,9 +344,9 @@ namespace rcr
                                 if (!gobj.rect.IntersectsWith(camera.rect))
                                     continue;
                                 PointF p = FixXY(gobj.GetPosition());
-                                Image surface = gobj.surface;
+                                Bitmap surface = gobj.surface;
                                 if (surface != null)
-                                    g.DrawImage(surface, new Point((int)p.X, (int)p.Y));
+                                    g.DrawImageUnscaled(surface, (int)p.X, (int)p.Y);
 
                                 if (collidersColor != null && gobj.useColliders)
                                 {
@@ -331,7 +363,6 @@ namespace rcr
                     brush.Dispose();
 
                     // --- GUI
-
                     foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
                     {
                         int layer = elem.Key; ;
@@ -344,7 +375,7 @@ namespace rcr
                                 {
                                     float x = gobj.rect.X;
                                     float y = gobj.rect.Y;
-                                    g.DrawImage(surface, new Point((int)x, (int)y));
+                                    g.DrawImageUnscaled(surface, (int)x, (int)y);
                                 }
                             }
                         }
@@ -354,13 +385,16 @@ namespace rcr
                     lock (screen)
                     {
                         g = Graphics.FromImage(screen);
-                        g.DrawImage(screenImage, new Point(0, 0));
+                        g.DrawImageUnscaled(screenImage, 0, 0);
                         g.Dispose();
+                        this.Invalidate();
                     }
 
-                    this.Invoke(
-                        new Action(() => this.Refresh())
-                    );
+                    /*this.Invoke(
+                        new Action(
+                            () => this.Refresh()
+                        )
+                    );*/
                 }
 
                 // --- gobj.OnQuit
@@ -370,11 +404,16 @@ namespace rcr
 
                 // cerramos la ventana en caso de que siga abierta
                 this.Invoke(
-                    new Action(() => this.Close())
+                    new Action(
+                        () =>
+                        {
+                            this.Close();
+                            this.Dispose();
+                        }
+                    )
                 );
-                this.Invoke(
-                    new Action(() => this.Dispose())
-                );
+
+                // finalizamos la aplicacion
                 Application.Exit();
             }
 
@@ -553,7 +592,7 @@ namespace rcr
             {
                 lock (keysPressed)
                 {
-                    return keysPressed.ContainsKey(key) ? keysPressed[key] : false;
+                    return keysPressed.ContainsKey(key) && keysPressed[key];
                 }
             }
 
@@ -601,13 +640,10 @@ namespace rcr
             /// <returns>La posicion del mouse</returns>
             public Point GetMousePosition()
             {
-                Point p = new Point(-1,-1);
+                Point p = new Point(-1, -1);
 
                 this.Invoke(new Action(() => p = PointToClient(Cursor.Position)));
-                if (p == null){
-                    p = new Point(-1, -1);
-                }
-                else if( p.X < 0 || p.X >= this.winSize.Width || p.Y < 0 || p.Y >= this.winSize.Height)
+                if (p.X < 0 || p.X >= this.winSize.Width || p.Y < 0 || p.Y >= this.winSize.Height)
                 {
                     p = new Point(-1, -1);
                 }
@@ -697,7 +733,7 @@ namespace rcr
             public void LoadTTFont(String name, String fname, FontStyle fstyle, int fsize)
             {
                 ttfFonts.AddFontFile(fname);
-                FontFamily fontFamily = new FontFamily(ttfFonts.Families[ttfFonts.Families.Length - 1].Name, ttfFonts);
+                FontFamily fontFamily = new FontFamily(ttfFonts.Families[^1].Name, ttfFonts);
                 Font font = new Font(fontFamily, fsize, fstyle);
                 fonts.Add(name, font);
             }
@@ -746,7 +782,7 @@ namespace rcr
                 return images[iname];
             }
 
-            private void FlipImage(Bitmap bitmap, bool flipX, bool flipY)
+            static private void FlipImage(Bitmap bitmap, bool flipX, bool flipY)
             {
                 if (flipX && flipY)
                     bitmap.RotateFlip(RotateFlipType.RotateNoneFlipXY);
@@ -835,7 +871,7 @@ namespace rcr
                 this.images.Add(iname, bitmaps.ToArray());
             }
 
-            private List<Bitmap> ReadImages(String pattern)
+            static private List<Bitmap> ReadImages(String pattern)
             {
                 pattern = FixDirectorySeparatorChar(pattern);
 
@@ -845,7 +881,7 @@ namespace rcr
 
                 if (dir == null)
                 {
-                    Bitmap bmp = new Bitmap(Image.FromFile(patt));
+                    Bitmap bmp = ReadImage(patt);
                     bitmaps.Add(bmp);
                 }
                 else
@@ -854,35 +890,59 @@ namespace rcr
                     Array.Sort(fnames);
                     foreach (String fname in fnames)
                     {
-                        Bitmap bmp = new Bitmap(Image.FromFile(fname));
+                        Bitmap bmp = ReadImage(fname);
                         bitmaps.Add(bmp);
                     }
                 }
                 return bitmaps;
             }
 
-            protected String FixDirectorySeparatorChar(String path)
+            static Bitmap ReadImage(String fname)
+            {
+                Bitmap img = new Bitmap(Image.FromFile(fname));
+                Bitmap bmp = new Bitmap(img.Width, img.Height, PixelFormat.Format32bppPArgb);
+                Graphics g = Graphics.FromImage(bmp);
+                g.DrawImage(img, 0, 0);
+                g.Dispose();
+                return bmp;
+            }
+
+            static protected String FixDirectorySeparatorChar(String path)
             {
                 return path.Replace('/', Path.DirectorySeparatorChar);
             }
 
             // ------ FORM ------
 
-            protected override void OnPaintBackground(PaintEventArgs e)
+            protected override void OnPaint(PaintEventArgs e)
             {
+                // los FPS
+                float dt = screenSpeed.ElapsedMilliseconds;
+                screenSpeed.Restart();
+
+                lock (fpsData)
+                {
+                    fpsData[fpsIdx++] = dt / 1000.0f;
+                    fpsIdx %= fpsData.Length;
+                }
+
+                // vaciamos la imagen del juego
                 lock (screen)
                 {
                     Graphics g = e.Graphics;
-                    g.DrawImage(screen, new Point(0, 0));
+                    //g.CompositingMode = CompositingMode.SourceCopy;
+                    g.DrawImageUnscaled(screen, 0, 0);
                 }
+            }
+
+            protected override void OnPaintBackground(PaintEventArgs e)
+            {
+                Console.WriteLine("OnPaintBackground");
             }
 
             protected override void OnFormClosing(FormClosingEventArgs e)
             {
-                lock (this)
-                {
-                    running = false;
-                }
+                running = false;
 
                 e.Cancel = true;
                 base.OnFormClosing(e);

@@ -149,7 +149,7 @@ namespace rcr
                 int y = (int)position.Y;
 
                 Graphics g = Graphics.FromImage(surface);
-                g.DrawImage(this.surface, new Point(x, y));
+                g.DrawImageUnscaled(this.surface, x, y);
                 g.Dispose();
             }
 

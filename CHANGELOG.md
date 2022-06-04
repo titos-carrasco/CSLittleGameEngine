@@ -1,5 +1,10 @@
 # Changelog
 
+## 2022-06-04
+- Optimizaciones varias para alcanzar mayores FPS (DrawImage es lento)
+- Se agrega en LGE getLPS() para obtener el tiempo promedio de rpoceso en cada ciclo del loop
+- getFPS() entrega ahora los FPS acorde a las invocaciones de Paint()
+
 ## 2022-06-01
 - Agrega documentación en el código
 - Modifica OnMainUpdate() y la convierte en variable pública eliminando IEvents
