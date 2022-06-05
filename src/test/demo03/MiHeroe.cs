@@ -35,19 +35,19 @@ namespace test
                     // cambiamos sus coordenadas segun la tecla presionada
                     if (lge.KeyPressed(Keys.Right))
                     {
-                        x = x + pixels;
+                        x += pixels;
                         SetImage("heroe_right");
                     }
                     else if (lge.KeyPressed(Keys.Left))
                     {
-                        x = x - pixels;
+                        x -= pixels;
                         SetImage("heroe_left");
                     }
 
                     if (lge.KeyPressed(Keys.Up))
-                        y = y - pixels;
+                        y -= pixels;
                     else if (lge.KeyPressed(Keys.Down))
-                        y = y + pixels;
+                        y += pixels;
 
                     // lo posicionamos
                     SetPosition(x, y);

@@ -11,7 +11,10 @@ namespace rcr
         /// <seealso cref="rcr.lge.GameObject" />
         public class Camera : GameObject
         {
+            /// <value>El GameObject al cual seguira la camara</value>
             protected internal GameObject target;
+
+            /// <value>true para que la camara siga el centro del GameObject</value>
             protected internal bool targetInCenter;
 
             /// <summary>

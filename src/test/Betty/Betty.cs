@@ -47,8 +47,8 @@ namespace test
 
                 // velocity = pixeles por segundo
                 // float velocity = 120;
-                // float pixels = velocity*dt;
-                float pixels = 2;
+                // float pixels = velocity * dt;
+                float pixels = 4;
 
                 // nuestra posicion actual y tamano
                 float x = GetX();
@@ -80,14 +80,8 @@ namespace test
                 else
                 {
                     SetImage("betty_idle", idx);
-                    if (x % 32 < 4)
-                        x = (float)Math.Round(x / 32) * 32;
-                    else if (x % 32 > 28)
-                        x = (float)Math.Round((x + 32) / 32) * 32;
-                    if (y % 32 < 4)
-                        y = (float)Math.Round(y / 32) * 32;
-                    else if (y % 32 > 28)
-                        y = (float)Math.Round((y + 32) / 32) * 32;
+                    x = (int)(x / 4) * 4;
+                    y = (int)(y / 4) * 4;
                 }
 
                 // tunel?
@@ -116,7 +110,18 @@ namespace test
                     }
                     else if (gobj.GetTag().Equals("muro"))
                     {
-                        SetPosition(lastPoint);
+                        float x = GetX();
+                        float y = GetY();
+                        float xo = gobj.GetX();
+                        float yo = gobj.GetY();
+
+                        if (lastPoint.X < x) x = xo - GetWidth();
+                        else if (lastPoint.X > x) x = xo + gobj.GetWidth();
+
+                        if (lastPoint.Y < y) y = yo - GetHeight();
+                        else if (lastPoint.Y > y) y = yo + gobj.GetHeight();
+
+                        SetPosition(x, y);
                     }
             }
         }

@@ -11,7 +11,7 @@ namespace test
         {
             public class Colliders
             {
-                private LittleGameEngine lge;
+                private readonly LittleGameEngine lge;
 
                 public Colliders(String resourceDir)
                 {
@@ -21,6 +21,7 @@ namespace test
                     lge = new LittleGameEngine(winSize, "Colliders", Color.White);
                     lge.ShowColliders(Color.Red);
                     lge.onMainUpdate = OnMainUpdate;
+                    lge.busyWait = true;
 
                     // cargamos los recursos que usaremos
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);

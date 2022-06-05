@@ -28,10 +28,10 @@ namespace test
                 float fy = ComputeYForce();
                 float ax = fx / m;
                 float ay = fy / m;
-                vx = vx + ax * dt;
-                vy = vy + ay * dt;
-                x = x + vx * dt;
-                y = y - vy * dt;
+                vx += ax * dt;
+                vy += ay * dt;
+                x += vx * dt;
+                y -= vy * dt;
             }
         }
     }

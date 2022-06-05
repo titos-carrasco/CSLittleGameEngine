@@ -20,6 +20,8 @@ namespace test
 
                 lge = new LittleGameEngine(winSize, "Betty", Color.White);
                 lge.onMainUpdate = OnMainUpdate;
+                lge.busyWait = false;
+                // lge.ShowColliders(Color.Red);
 
                 // cargamos los recursos que usaremos
                 lge.LoadImage("fondo", resourceDir + "/images/Betty/Fondo.png", false, false);
@@ -110,7 +112,7 @@ namespace test
             public static void Main()
             {
                 Game game = new Game(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
-                game.Run(60);
+                game.Run(40);
                 Console.WriteLine("Eso es todo!!!");
             }
 

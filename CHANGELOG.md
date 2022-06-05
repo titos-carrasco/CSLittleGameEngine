@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.3 2022-06-05
+
+- Agrega atributo para especificar si se esperará a completar en cada cuadro el tiempo 1/FPS utilizando una espera ocupada o Sleep()
+- Se actualizan los demos acorde a lo anterior
+- Agrega documentación
+
 ## v0.5.2 2022-06-04
 
 - Ajustes de compatibilidad con Mono en Linux

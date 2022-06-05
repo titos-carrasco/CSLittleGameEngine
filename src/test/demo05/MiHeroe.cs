@@ -77,9 +77,9 @@ namespace test
                     }
 
                     if (lge.KeyPressed(Keys.Up))
-                        y = y - pixels;
+                        y -= pixels;
                     else if (lge.KeyPressed(Keys.Down))
-                        y = y + pixels;
+                        y += pixels;
 
                     // siguiente imagen de la secuencia
                     NextImage(dt, 0.050f);

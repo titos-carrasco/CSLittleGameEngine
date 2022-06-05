@@ -21,6 +21,7 @@ namespace test
 
                 lge = new LittleGameEngine(winSize, "Particles", Color.White);
                 lge.onMainUpdate = OnMainUpdate;
+                lge.busyWait = true;
 
                 // cargamos los recursos que usaremos
                 lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);

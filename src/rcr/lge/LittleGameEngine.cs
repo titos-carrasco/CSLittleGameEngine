@@ -19,7 +19,7 @@ namespace rcr
         /// </summary>
         public class LittleGameEngine : Form
         {
-            public const int GUI_LAYER = 0xFFFF;
+            private const int GUI_LAYER = 0xFFFF;
 
             private static LittleGameEngine lge = null;
 
@@ -36,6 +36,7 @@ namespace rcr
             private int lpsIdx;
             private volatile bool running = false;
 
+            /// <value>Metodo que procesara el evento OnMainUpdate</value>
             public Action<float> onMainUpdate = null;
             private readonly Dictionary<Keys, bool> keysPressed;
             private readonly bool[] mouseButtons = { false, false, false };
@@ -50,6 +51,9 @@ namespace rcr
 
             private readonly Bitmap screen;
             private readonly Stopwatch screenSpeed;
+
+            /// <value>true para completar 1/FPS en un loop cerrado, false para usar Sleep()</value>
+            public bool busyWait = true;
 
             // ------ game engine ------
 
@@ -118,7 +122,7 @@ namespace rcr
             /// <summary>
             /// Obtiene una instancia del juego en ejecucion. Util para las diferentes clases utilizadas en un juego tal de acceder a metodos estaticos
             /// </summary>
-            /// <returns><La instancia de LGE en ejecucion/returns>
+            /// <returns>La instancia de LGE en ejecucion</returns>
             /// <exception cref="System.ApplicationException">LGE no se encuentra activo</exception>
             public static LittleGameEngine GetInstance()
             {
@@ -208,7 +212,13 @@ namespace rcr
                     // los eventos son atrapados por los listener
 
                     // --- nos ajustamos a 1/fps
-                    while (stopwatch.ElapsedMilliseconds < tExpected) ;
+                    if (busyWait)
+                        while (stopwatch.ElapsedMilliseconds < tExpected);      // consume CPU
+                    else
+                    {
+                        long t = tExpected - stopwatch.ElapsedMilliseconds;
+                        if (t > 0) Thread.Sleep((int)t);                        // inexacto en Windows ( sumar 10-15 ms)
+                    }
 
                     // --- tiempo desde el ciclo anterior
                     float dt = stopwatch.ElapsedMilliseconds / 1000.0f;
@@ -596,6 +606,10 @@ namespace rcr
                 }
             }
 
+            /// <summary>
+            /// Reacciona cuando una tecla es presionada
+            /// </summary>
+            /// <param name="e">Contiene la data del evento</param>
             protected override void OnKeyDown(KeyEventArgs e)
             {
                 base.OnKeyDown(e);
@@ -608,6 +622,10 @@ namespace rcr
                 }
             }
 
+            /// <summary>
+            /// Reacciona cuando una tecla es soltada
+            /// </summary>
+            /// <param name="e">Contiene la data del evento</param>
             protected override void OnKeyUp(KeyEventArgs e)
             {
                 base.OnKeyUp(e);
@@ -666,6 +684,11 @@ namespace rcr
                 }
             }
 
+            /// <summary>
+            /// Reacciona cuando un boton del mouse realiza un clic
+            /// </summary>
+            /// <param name="sender">The sender.</param>
+            /// <param name="e">La data del evento</param>
             public void MouseClicked(Object sender, MouseEventArgs e)
             {
                 lock (mouseClicks)
@@ -675,6 +698,11 @@ namespace rcr
                 }
             }
 
+            /// <summary>
+            /// Reacciona cuando un boton del mouse es presionado
+            /// </summary>
+            /// <param name="sender">The sender.</param>
+            /// <param name="e">La data del evento</param>
             public void MousePressed(Object sender, MouseEventArgs e)
             {
                 lock (mouseButtons)
@@ -684,6 +712,11 @@ namespace rcr
                 }
             }
 
+            /// <summary>
+            /// Reacciona cuando un boton del mouse es soltado
+            /// </summary>
+            /// <param name="sender">The sender.</param>
+            /// <param name="e">La data del evento</param>
             public void MouseReleased(Object sender, MouseEventArgs e)
             {
                 lock (mouseButtons)
@@ -830,6 +863,7 @@ namespace rcr
                     g.DrawImage(b, 0, 0, size.Width, size.Height);
                     g.Dispose();
                     bitmaps[i] = bmp;
+                    b.Dispose();
                 }
                 this.images.Add(iname, bitmaps.ToArray());
             }
@@ -859,6 +893,7 @@ namespace rcr
                     g.DrawImage(b, 0, 0, width, height);
                     g.Dispose();
                     bitmaps[i] = bmp;
+                    b.Dispose();
                 }
                 this.images.Add(iname, bitmaps.ToArray());
             }
@@ -873,7 +908,7 @@ namespace rcr
 
                 if (dir == null)
                 {
-                    Bitmap bmp = ReadImage(patt);
+                    Bitmap bmp = new Bitmap(Image.FromFile(patt));
                     bitmaps.Add(bmp);
                 }
                 else
@@ -882,23 +917,18 @@ namespace rcr
                     Array.Sort(fnames);
                     foreach (String fname in fnames)
                     {
-                        Bitmap bmp = ReadImage(fname);
+                        Bitmap bmp = new Bitmap(Image.FromFile(fname));
                         bitmaps.Add(bmp);
                     }
                 }
                 return bitmaps;
             }
 
-            static Bitmap ReadImage(String fname)
-            {
-                Bitmap img = new Bitmap(Image.FromFile(fname));
-                Bitmap bmp = new Bitmap(img.Width, img.Height, PixelFormat.Format32bppPArgb);
-                Graphics g = Graphics.FromImage(bmp);
-                g.DrawImage(img, 0, 0);
-                g.Dispose();
-                return bmp;
-            }
-
+            /// <summary>
+            /// Reemplaza, en una ruta de archivo, el caracter '/' por el adecuado al S.O.
+            /// </summary>
+            /// <param name="path">La ruta a corregir</param>
+            /// <returns></returns>
             static protected String FixDirectorySeparatorChar(String path)
             {
                 return path.Replace('/', Path.DirectorySeparatorChar);
@@ -906,6 +936,12 @@ namespace rcr
 
             // ------ FORM ------
 
+            /// <summary>
+            /// Reacciona al evento OnPaint
+            /// 
+            /// <para>Todo el despliegue ocurre aqui junto con calcular los FPS</para>
+            /// </summary>
+            /// <param name="e">La data del evento</param>
             protected override void OnPaint(PaintEventArgs e)
             {
                 // los FPS
@@ -927,11 +963,20 @@ namespace rcr
                 }
             }
 
+
+            /// <summary>
+            /// Reacciona al evento OnPaintBackground
+            /// </summary>
+            /// <param name="e">La data del evento.</param>
             protected override void OnPaintBackground(PaintEventArgs e)
             {
-                Console.WriteLine("OnPaintBackground");
+                //Console.WriteLine("OnPaintBackground");
             }
 
+            /// <summary>
+            /// Reacciona al evento OnFormCLosing
+            /// </summary>
+            /// <param name="e">A <see cref="T:System.Windows.Forms.FormClosingEventArgs" /> that contains the event data.</param>
             protected override void OnFormClosing(FormClosingEventArgs e)
             {
                 running = false;

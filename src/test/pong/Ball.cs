@@ -10,8 +10,8 @@ namespace test
         public class Ball : Canvas
         {
             private readonly LittleGameEngine lge;
-            private float initX;
-            private float initY;
+            private readonly float initX;
+            private readonly float initY;
             private float speedX = -120;
             private float speedY = 120;
 

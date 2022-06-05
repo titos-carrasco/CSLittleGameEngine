@@ -18,6 +18,7 @@ namespace test
 
                 lge = new LittleGameEngine(winSize, "Birds", Color.White);
                 lge.onMainUpdate = OnMainUpdate;
+                lge.busyWait = true;
 
                 // cargamos los recursos que usaremos
                 lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);

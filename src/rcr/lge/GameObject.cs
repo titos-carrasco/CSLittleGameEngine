@@ -11,14 +11,23 @@ namespace rcr
         /// </summary>
         public class GameObject
         {
+            /// <value>El rectangulo que delimita a este GameObject</value>
             protected internal RectangleF rect;
+            /// <value>Los rectangulos que confirman el colisionador de este GameObject</value>
             protected internal RectangleF[] collider = { };
+            /// <value>El nombre de este GameObject</value>
             protected internal String name;
+            /// <value>La imagen que visibiliza este GameObject</value>
             protected internal Bitmap surface = null;
+            /// <value>El rectangulo que limita el movimiento de este GameObject</value>
             protected internal Nullable<RectangleF> bounds = null;
+            /// <value>El tag de este GameObject</value>
             protected internal String tag = "";
+            /// <value>true si este GameObject participa del procesdamiento de colisiones</value>
             protected internal bool useColliders = false;
+            /// <value>true si este GameObject sera incluido en el evento OnCollision</value>
             protected internal bool callOnCollision = false;
+            /// <value></value>
             protected internal int layer = -1;
 
             /// <summary>

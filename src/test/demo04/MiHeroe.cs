@@ -38,7 +38,7 @@ namespace test
                     // cambiamos sus coordenadas, orientacion e imagen segun la tecla presionada
                     if (lge.KeyPressed(Keys.Right))
                     {
-                        x = x + pixels;
+                        x += pixels;
                         if (state != 2)
                         {
                             SetImage("heroe_run_right");
@@ -47,7 +47,7 @@ namespace test
                     }
                     else if (lge.KeyPressed(Keys.Left))
                     {
-                        x = x - pixels;
+                        x -= pixels;
                         if (state != -2)
                         {
                             SetImage("heroe_run_left");
@@ -72,9 +72,9 @@ namespace test
                     }
 
                     if (lge.KeyPressed(Keys.Up))
-                        y = y - pixels;
+                        y -= pixels;
                     else if (lge.KeyPressed(Keys.Down))
-                        y = y + pixels;
+                        y += pixels;
 
                     // siguiente imagen de la secuencia
                     NextImage(dt, 0.050f);

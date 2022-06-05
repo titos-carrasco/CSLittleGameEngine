@@ -20,6 +20,7 @@ namespace test
 
                 lge = new LittleGameEngine(winSize, "Ping", Color.Black);
                 lge.onMainUpdate = OnMainUpdate;
+                lge.busyWait = true;
                 // lge.ShowColliders(Color.Red);
 
                 // cargamos los recursos que usaremos
