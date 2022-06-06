@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
+using System.Media;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -45,6 +46,7 @@ namespace rcr
             private readonly Dictionary<String, Bitmap[]> images;
             private readonly Dictionary<String, Font> fonts;
             private readonly PrivateFontCollection ttfFonts;
+            private readonly Dictionary<String, SoundPlayer> sounds;
 
             private readonly Color bgColor;
             private Nullable<Color> collidersColor = null;
@@ -52,8 +54,12 @@ namespace rcr
             private readonly Bitmap screen;
             private readonly Stopwatch screenSpeed;
 
-            /// <value>true para completar 1/FPS en un loop cerrado, false para usar Sleep()</value>
-            public bool busyWait = true;
+            /// <value>Modo de espera para completar 1/FPS</value>
+            public int waitMode = 0;
+            /// <value>Modo de espera utilizando Thread.Sleep()</value>
+            public const int WAITMODE_SLEEP = 0;
+            /// <value>Modo de espera utilizando un ciclo cerrado</value>
+            public const int WAITMODE_BUSY = 1;
 
             // ------ game engine ------
 
@@ -82,6 +88,7 @@ namespace rcr
                 images = new Dictionary<String, Bitmap[]>();
                 fonts = new Dictionary<String, Font>();
                 ttfFonts = new PrivateFontCollection();
+                sounds = new Dictionary<String, SoundPlayer>();
 
                 keysPressed = new Dictionary<Keys, bool>();
 
@@ -212,12 +219,16 @@ namespace rcr
                     // los eventos son atrapados por los listener
 
                     // --- nos ajustamos a 1/fps
-                    if (busyWait)
-                        while (stopwatch.ElapsedMilliseconds < tExpected);      // consume CPU
-                    else
+                    switch (waitMode)
                     {
-                        long t = tExpected - stopwatch.ElapsedMilliseconds;
-                        if (t > 0) Thread.Sleep((int)t);                        // inexacto en Windows ( sumar 10-15 ms)
+                        case WAITMODE_BUSY:
+                            while (stopwatch.ElapsedMilliseconds < tExpected) ; // consume CPU
+                            break;
+                        case WAITMODE_SLEEP:
+                        default:
+                            long t = tExpected - stopwatch.ElapsedMilliseconds;
+                            if (t > 0) Thread.Sleep((int)t);                    // inexacto en Windows ( sumar 10-15 ms)
+                            break;
                     }
 
                     // --- tiempo desde el ciclo anterior
@@ -779,6 +790,66 @@ namespace rcr
             public Font GetFont(String name)
             {
                 return fonts[name];
+            }
+
+            // ------ sounds ------
+
+            /// <summary>
+            /// Carga un archivo de sonido para ser utilizado durante el juego
+            /// </summary>
+            /// <param name="name">Nombre a asignar al sonido</param>
+            /// <param name="fname">Nombre del archivo que contiene el sonido</param>
+            public void LoadSound(String name, String fname)
+            {
+                fname = FixDirectorySeparatorChar(fname);
+                SoundPlayer soundPlayer = new SoundPlayer(fname);
+                soundPlayer.Load();
+                while (!soundPlayer.IsLoadCompleted)
+                    Thread.Sleep(1);
+                sounds.Add(name, soundPlayer);
+            }
+
+            /// <summary>
+            /// Inicia la reproduccion de un sonido
+            /// </summary>
+            /// <param name="name">Nombre del sonido (previamente cargado) a reproducir</param>
+            /// <param name="loop">Verdadero para reproducirlo en loop</param>
+            /// <param name="level">Volumen 0.0 a 1.0</param>
+            public void PlaySound(String name, bool loop, float level)
+            {
+                if(loop)
+                    sounds[name].PlayLooping();
+                else
+                    sounds[name].Play();
+            }
+
+            /// <summary>
+            /// Detiene la reproducción del sonido especificado
+            /// </summary>
+            /// <param name="name">El nombre del sonido a detener</param>
+            public void StopSound(String name)
+            {
+                sounds[name].Stop();
+            }
+
+            /// <summary>
+            /// Establece el volumen de un sonido (no implementada)
+            /// </summary>
+            /// <param name="name">Nombre del sonido</param>
+            /// <param name="level">Volumen 0.0 a 1.0</param>
+            public void SetSoundVolume(String name, float level)
+            {
+
+            }
+
+            /// <summary>
+            /// Obtiene el volumen de un sonido
+            /// </summary>
+            /// <param name="name">Nombre del sonido</param>
+            /// <returns>Volumen del sonido 0.0 a 1.0</returns>
+            public float GetSoundVolume(String name)
+            {
+                return 0;
             }
 
             // ------ images ------

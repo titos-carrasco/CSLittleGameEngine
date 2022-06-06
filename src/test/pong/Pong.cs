@@ -13,17 +13,18 @@ namespace test
             private readonly LittleGameEngine lge;
             private readonly int paddleSpeed = 240;
 
-            public Pong()
+            public Pong(String resourceDir)
             {
                 // creamos el juego
                 Size winSize = new Size(640, 640);
 
                 lge = new LittleGameEngine(winSize, "Ping", Color.Black);
                 lge.onMainUpdate = OnMainUpdate;
-                lge.busyWait = true;
+                lge.waitMode = LittleGameEngine.WAITMODE_BUSY;
                 // lge.ShowColliders(Color.Red);
 
                 // cargamos los recursos que usaremos
+                lge.LoadSound("pong", resourceDir + @"/sounds/4391__noisecollector__pongblipf-5.wav");
                 lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                 // agregamos la barra de info
@@ -141,7 +142,7 @@ namespace test
             // show time
             public static void Main()
             {
-                Pong game = new Pong();
+                Pong game = new Pong(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

@@ -45,7 +45,7 @@ namespace test
                 // velocity = pixeles por segundo
                 // float velocity = 120;
                 // float pixels = velocity*dt;
-                float pixels = 4;
+                float pixels = 2;
 
                 // las coordenadas de Betty
                 Betty betty = (Betty)lge.GetGObject("Betty");

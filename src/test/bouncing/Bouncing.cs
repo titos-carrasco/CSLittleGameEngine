@@ -19,7 +19,7 @@ namespace test
 
                 lge = new LittleGameEngine(winSize, "Bouncing Balls", Color.White);
                 lge.onMainUpdate = OnMainUpdate;
-                lge.busyWait = true;
+                lge.waitMode = LittleGameEngine.WAITMODE_BUSY;
 
                 // cargamos los recursos que usaremos
                 lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);

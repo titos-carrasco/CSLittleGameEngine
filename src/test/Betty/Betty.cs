@@ -48,7 +48,7 @@ namespace test
                 // velocity = pixeles por segundo
                 // float velocity = 120;
                 // float pixels = velocity * dt;
-                float pixels = 4;
+                float pixels = 2;
 
                 // nuestra posicion actual y tamano
                 float x = GetX();

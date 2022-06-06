@@ -17,7 +17,7 @@ namespace test
 
                 lge = new LittleGameEngine(winSize, "El Cementerio", Color.Black);
                 lge.onMainUpdate = OnMainUpdate;
-                lge.busyWait = true;
+                lge.waitMode = LittleGameEngine.WAITMODE_BUSY;
 
                 // cargamos los recursos que usaremos
                 lge.LoadImage("fondo", resourceDir + "/fondo.png", false, false);

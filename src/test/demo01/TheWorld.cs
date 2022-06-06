@@ -20,18 +20,22 @@ namespace test
 
                     lge = new LittleGameEngine(winSize, "The World", Color.White);
                     lge.onMainUpdate = OnMainUpdate;
-                    lge.busyWait = true;
+                    lge.waitMode = LittleGameEngine.WAITMODE_BUSY;
                     //lge.ShowColliders(Color.Red);
 
                     // cargamos los recursos que usaremos
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
                     lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
+                    lge.LoadSound("fondo", resourceDir + "/sounds/happy-and-sad.wav");
                     lge.LoadSysFont("banner", "Comic Sans MS", FontStyle.Regular, 30);
                     lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0));
                     lge.AddGObject(fondo, 0);
+
+                    // activamos la nusica de fondo
+                    lge.PlaySound("fondo", true, 1);
 
                     // agregamos la barra de info
                     Canvas infobar = new Canvas(new PointF(0, 0), new Size(800, 20), "infobar");

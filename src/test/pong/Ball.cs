@@ -50,11 +50,13 @@ namespace test
                         {
                             speedY = -speedY;
                             dy = -dy;
+                            lge.PlaySound("pong", false, 1);
                         }
                         else if (gobj.GetTag().Equals("paddle"))
                         {
                             speedX = -speedX;
                             dx = -dx;
+                            lge.PlaySound("pong", false, 1);
                         }
                         else if (gobj.GetTag().Equals("wall-vertical"))
                         {

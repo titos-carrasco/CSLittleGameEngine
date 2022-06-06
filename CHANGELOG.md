@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.4 2022-06-06
+
+- Agrega sonido
+- Modifica mecanismo para especificar el tipo de espera para completar 1/FPS en el game loop
+
 ## v0.5.3 2022-06-05
 
 - Agrega atributo para especificar si se esperará a completar en cada cuadro el tiempo 1/FPS utilizando una espera ocupada o Sleep()

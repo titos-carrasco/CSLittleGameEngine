@@ -20,7 +20,7 @@ namespace test
 
                 lge = new LittleGameEngine(winSize, "Betty", Color.White);
                 lge.onMainUpdate = OnMainUpdate;
-                lge.busyWait = false;
+                lge.waitMode = LittleGameEngine.WAITMODE_BUSY;
                 // lge.ShowColliders(Color.Red);
 
                 // cargamos los recursos que usaremos
@@ -112,7 +112,7 @@ namespace test
             public static void Main()
             {
                 Game game = new Game(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
-                game.Run(40);
+                game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }
 
