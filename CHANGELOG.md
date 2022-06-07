@@ -1,5 +1,9 @@
 # Changelog
 
+## 2022-06-07
+
+- Corrige Refresh en Linux
+
 ## v0.5.4 2022-06-06
 
 - Agrega sonido

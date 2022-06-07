@@ -18,7 +18,7 @@ namespace test
                 // creamos el juego
                 Size winSize = new Size(640, 640);
 
-                lge = new LittleGameEngine(winSize, "Ping", Color.Black);
+                lge = new LittleGameEngine(winSize, "Pong", Color.Black);
                 lge.onMainUpdate = OnMainUpdate;
                 lge.waitMode = LittleGameEngine.WAITMODE_BUSY;
                 // lge.ShowColliders(Color.Red);

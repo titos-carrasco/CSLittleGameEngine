@@ -411,11 +411,11 @@ namespace rcr
                         this.Invalidate();
                     }
 
-                    /*this.Invoke(
+                    this.Invoke(
                         new Action(
                             () => this.Refresh()
                         )
-                    );*/
+                    );
                 }
 
                 // --- gobj.OnQuit
