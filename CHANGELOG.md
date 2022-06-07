@@ -3,6 +3,8 @@
 ## 2022-06-07
 
 - Corrige Refresh en Linux
+- Modifica, nuevamente, mecanismo para especificar el tipo de espera para completar 1/FPS en el game loop. Para ello reduce a 1ms la resolución del clock de Windows en el momento de la espera
+- Ajusta los demos acorde a lo anterior
 
 ## v0.5.4 2022-06-06
 

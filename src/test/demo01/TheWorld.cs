@@ -20,8 +20,7 @@ namespace test
 
                     lge = new LittleGameEngine(winSize, "The World", Color.White);
                     lge.onMainUpdate = OnMainUpdate;
-                    lge.waitMode = LittleGameEngine.WAITMODE_BUSY;
-                    //lge.ShowColliders(Color.Red);
+                   //lge.ShowColliders(Color.Red);
 
                     // cargamos los recursos que usaremos
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);

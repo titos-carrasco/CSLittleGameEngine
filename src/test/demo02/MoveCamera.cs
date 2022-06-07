@@ -20,7 +20,6 @@ namespace test
 
                     lge = new LittleGameEngine(winSize, "Move Camera", Color.White);
                     lge.onMainUpdate = OnMainUpdate;
-                    lge.waitMode = LittleGameEngine.WAITMODE_BUSY;
 
                     // cargamos los recursos que usaremos
                     lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);

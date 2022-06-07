@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Media;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -54,12 +55,11 @@ namespace rcr
             private readonly Bitmap screen;
             private readonly Stopwatch screenSpeed;
 
-            /// <value>Modo de espera para completar 1/FPS</value>
-            public int waitMode = 0;
-            /// <value>Modo de espera utilizando Thread.Sleep()</value>
-            public const int WAITMODE_SLEEP = 0;
-            /// <value>Modo de espera utilizando un ciclo cerrado</value>
-            public const int WAITMODE_BUSY = 1;
+            [DllImport("winmm.dll", EntryPoint = "timeBeginPeriod", SetLastError = true)]
+            private static extern uint TimeBeginPeriod(uint uMilliseconds);
+            [DllImport("winmm.dll", EntryPoint = "timeEndPeriod", SetLastError = true)]
+            private static extern uint TimeEndPeriod(uint uMilliseconds);
+
 
             // ------ game engine ------
 
@@ -205,6 +205,8 @@ namespace rcr
             /// <param name="fps">Los FPS a mantener</param>
             private void TRun(int fps)
             {
+                bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
+
                 screenSpeed.Start();
                 Bitmap screenImage = CreateOpaqueImage(winSize.Width, winSize.Height);
 
@@ -212,6 +214,7 @@ namespace rcr
 
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
+                AutoResetEvent autoResetEvent = new AutoResetEvent(false);
 
                 running = true;
                 while (running)
@@ -219,16 +222,17 @@ namespace rcr
                     // los eventos son atrapados por los listener
 
                     // --- nos ajustamos a 1/fps
-                    switch (waitMode)
+                    long t = tExpected - stopwatch.ElapsedMilliseconds;
+                    if (t > 0)
                     {
-                        case WAITMODE_BUSY:
-                            while (stopwatch.ElapsedMilliseconds < tExpected) ; // consume CPU
-                            break;
-                        case WAITMODE_SLEEP:
-                        default:
-                            long t = tExpected - stopwatch.ElapsedMilliseconds;
-                            if (t > 0) Thread.Sleep((int)t);                    // inexacto en Windows ( sumar 10-15 ms)
-                            break;
+                        if (isWindows)
+                        {
+                            TimeBeginPeriod(1);
+                            autoResetEvent.WaitOne((int)t);
+                            TimeEndPeriod(1);
+                        }
+                        else
+                            autoResetEvent.WaitOne((int)t);
                     }
 
                     // --- tiempo desde el ciclo anterior
@@ -817,7 +821,7 @@ namespace rcr
             /// <param name="level">Volumen 0.0 a 1.0</param>
             public void PlaySound(String name, bool loop, float level)
             {
-                if(loop)
+                if (loop)
                     sounds[name].PlayLooping();
                 else
                     sounds[name].Play();
