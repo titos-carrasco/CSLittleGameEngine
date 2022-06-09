@@ -22,12 +22,12 @@ namespace test
                     lge.onMainUpdate = OnMainUpdate;
 
                     // cargamos los recursos que usaremos
-                    lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
-                    lge.LoadImage("heroe_idle_right", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, false, false);
-                    lge.LoadImage("heroe_idle_left", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, true, false);
-                    lge.LoadImage("heroe_run_right", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, false, false);
-                    lge.LoadImage("heroe_run_left", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, true, false);
-                    lge.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
+                    lge.imagesManager.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
+                    lge.imagesManager.LoadImage("heroe_idle_right", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, false, false);
+                    lge.imagesManager.LoadImage("heroe_idle_left", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, true, false);
+                    lge.imagesManager.LoadImage("heroe_run_right", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, false, false);
+                    lge.imagesManager.LoadImage("heroe_run_left", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, true, false);
+                    lge.imagesManager.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
                     lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                     // agregamos el fondo

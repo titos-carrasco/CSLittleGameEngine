@@ -44,7 +44,7 @@ namespace rcr
             private readonly bool[] mouseButtons = { false, false, false };
             private readonly Nullable<Point>[] mouseClicks = { null, null, null };
 
-            private readonly Dictionary<String, Bitmap[]> images;
+            public readonly ImagesManager imagesManager;
             private readonly Dictionary<String, Font> fonts;
             private readonly PrivateFontCollection ttfFonts;
             private readonly Dictionary<String, SoundPlayer> sounds;
@@ -85,7 +85,7 @@ namespace rcr
 
                 this.bgColor = bgColor;
 
-                images = new Dictionary<String, Bitmap[]>();
+                imagesManager = new ImagesManager();
                 fonts = new Dictionary<String, Font>();
                 ttfFonts = new PrivateFontCollection();
                 sounds = new Dictionary<String, SoundPlayer>();
@@ -100,7 +100,7 @@ namespace rcr
                 camera = new Camera(new PointF(0, 0), winSize);
 
                 screenSpeed = new Stopwatch();
-                screen = CreateOpaqueImage(winSize.Width, winSize.Height);
+                screen = ImagesManager.CreateOpaqueImage(winSize.Width, winSize.Height);
                 Graphics g = Graphics.FromImage(screen);
                 g.Clear(bgColor);
                 g.Dispose();
@@ -208,7 +208,7 @@ namespace rcr
                 bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
 
                 screenSpeed.Start();
-                Bitmap screenImage = CreateOpaqueImage(winSize.Width, winSize.Height);
+                Bitmap screenImage = ImagesManager.CreateOpaqueImage(winSize.Width, winSize.Height);
 
                 long tExpected = 1000 / fps;
 
@@ -858,157 +858,6 @@ namespace rcr
 
             // ------ images ------
 
-            /// <summary>
-            /// Crea una imagen sin transparencia de dimensiones dadas
-            /// </summary>
-            /// <param name="width">El ancho de la imagen</param>
-            /// <param name="height">El alto de la imagen</param>
-            /// <returns>La imagen sin transparencia</returns>
-            static protected internal Bitmap CreateOpaqueImage(int width, int height)
-            {
-                return new Bitmap(width, height, PixelFormat.Format32bppRgb);
-            }
-
-            /// <summary>
-            /// Crea una imagen con transparencia de dimensiones dadas
-            /// </summary>
-            /// <param name="width">El ancho de la imagen</param>
-            /// <param name="height">El alto de la imagen</param>
-            /// <returns>La imagen con transparencia</returns>
-            static protected internal Bitmap CreateTranslucentImage(int width, int height)
-            {
-                return new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            }
-
-            /// <summary>
-            /// Recupera un grupo de imagenes previamente cargadas
-            /// </summary>
-            /// <param name="iname">El nombre asignado al grupo de imagenes</param>
-            /// <returns>La lista de imagenes</returns>
-            public Bitmap[] GetImages(String iname)
-            {
-                return images[iname];
-            }
-
-            static private void FlipImage(Bitmap bitmap, bool flipX, bool flipY)
-            {
-                if (flipX)
-                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                if (flipY)
-                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            }
-
-            /// <summary>
-            /// Carga una imagen o grupo de imagenes
-            /// </summary>
-            /// <param name="iname">el nombre interno a asignar a las imagenes cargadas.</param>
-            /// <param name="pattern">El patron de archivos para las imagenes a cargar (glob)</param>
-            /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
-            /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
-            public void LoadImage(String iname, String pattern, bool flipX, bool flipY)
-            {
-                List<Bitmap> bitmaps = ReadImages(pattern);
-                foreach (Bitmap bmp in bitmaps)
-                {
-                    FlipImage(bmp, flipX, flipY);
-                }
-                this.images.Add(iname, bitmaps.ToArray());
-            }
-
-            /// <summary>
-            /// Carga una imagen o grupo de imagenes
-            /// </summary>
-            /// <param name="iname">el nombre interno a asignar a las imagenes cargadas.</param>
-            /// <param name="pattern">El patron de archivos para las imagenes a cargar (glob)</param>
-            /// <param name="size">Tamano a aplicar a la imagen</param>
-            /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
-            /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
-            public void LoadImage(String iname, String pattern, Size size, bool flipX, bool flipY)
-            {
-                List<Bitmap> bitmaps = ReadImages(pattern);
-                int nimages = bitmaps.Count;
-                for (int i = 0; i < nimages; i++)
-                {
-                    Bitmap b = bitmaps[i];
-                    FlipImage(b, flipX, flipY);
-                    Bitmap bmp = new Bitmap(size.Width, size.Height);
-
-                    Graphics g = Graphics.FromImage(bmp);
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(b, 0, 0, size.Width, size.Height);
-                    g.Dispose();
-                    bitmaps[i] = bmp;
-                    b.Dispose();
-                }
-                this.images.Add(iname, bitmaps.ToArray());
-            }
-
-            /// <summary>
-            /// Carga una imagen o grupo de imagenes
-            /// </summary>
-            /// <param name="iname">el nombre interno a asignar a las imagenes cargadas.</param>
-            /// <param name="pattern">El patron de archivos para las imagenes a cargar (glob)</param>
-            /// <param name="scale">Factor de escala de la imagen</param>
-            /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
-            /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
-            public void LoadImage(String iname, String pattern, float scale, bool flipX, bool flipY)
-            {
-                List<Bitmap> bitmaps = ReadImages(pattern);
-                int nimages = bitmaps.Count;
-                for (int i = 0; i < nimages; i++)
-                {
-                    Bitmap b = bitmaps[i];
-                    FlipImage(b, flipX, flipY);
-                    int width = (int)Math.Round(b.Width * scale);
-                    int height = (int)Math.Round(b.Height * scale);
-                    Bitmap bmp = new Bitmap(width, height);
-
-                    Graphics g = Graphics.FromImage(bmp);
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(b, 0, 0, width, height);
-                    g.Dispose();
-                    bitmaps[i] = bmp;
-                    b.Dispose();
-                }
-                this.images.Add(iname, bitmaps.ToArray());
-            }
-
-            static private List<Bitmap> ReadImages(String pattern)
-            {
-                pattern = FixDirectorySeparatorChar(pattern);
-
-                String dir = Path.GetDirectoryName(pattern);
-                String patt = Path.GetFileName(pattern);
-                List<Bitmap> bitmaps = new List<Bitmap>();
-
-                if (dir == null)
-                {
-                    Bitmap bmp = new Bitmap(Image.FromFile(patt));
-                    bitmaps.Add(bmp);
-                }
-                else
-                {
-                    String[] fnames = new List<String>(Directory.EnumerateFiles(dir, patt)).ToArray();
-                    Array.Sort(fnames);
-                    foreach (String fname in fnames)
-                    {
-                        Bitmap bmp = new Bitmap(Image.FromFile(fname));
-                        bitmaps.Add(bmp);
-                    }
-                }
-                return bitmaps;
-            }
-
-            /// <summary>
-            /// Reemplaza, en una ruta de archivo, el caracter '/' por el adecuado al S.O.
-            /// </summary>
-            /// <param name="path">La ruta a corregir</param>
-            /// <returns></returns>
-            static protected String FixDirectorySeparatorChar(String path)
-            {
-                return path.Replace('/', Path.DirectorySeparatorChar);
-            }
-
             // ------ FORM ------
 
             /// <summary>
@@ -1060,6 +909,36 @@ namespace rcr
                 base.OnFormClosing(e);
             }
 
+            // ------ utils ------
+
+            /// <summary>
+            /// Reemplaza, en una ruta de archivo, el caracter '/' por el adecuado al S.O.
+            /// </summary>
+            /// <param name="path">La ruta a corregir</param>
+            /// <returns></returns>
+            static protected internal String FixDirectorySeparatorChar(String path)
+            {
+                return path.Replace('/', Path.DirectorySeparatorChar);
+            }
+
+
+            /// <summary>
+            /// Expande un patron de nombres de archivos tipo glob
+            /// </summary>
+            /// <param name="pattern">El patron a expandir</param>
+            /// <returns>Los nombres de archivos cubiertos por el patron</returns>
+            static protected internal String[] ExpandFilenames(String pattern)
+            {
+
+                pattern = FixDirectorySeparatorChar(pattern);
+
+                String dir = Path.GetDirectoryName(pattern);
+                String patt = Path.GetFileName(pattern);
+
+                String[] fnames = new List<String>(Directory.EnumerateFiles(dir, patt)).ToArray();
+                Array.Sort(fnames);
+                return fnames;
+            }
         }
     }
 }

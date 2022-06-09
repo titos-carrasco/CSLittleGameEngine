@@ -31,7 +31,7 @@ namespace rcr
             public Canvas(PointF origin, SizeF size, String name) :
                 base(origin, size, name)
             {
-                surface = LittleGameEngine.CreateTranslucentImage((int)size.Width, (int)size.Height);
+                surface = ImagesManager.CreateTranslucentImage((int)size.Width, (int)size.Height);
             }
 
             /// <summary>
@@ -145,14 +145,45 @@ namespace rcr
             /// <param name="surface">Superficie (imagen) a trazar</param>
             public void DrawSurface(PointF position, Bitmap surface)
             {
-                int x = (int)position.X;
-                int y = (int)position.Y;
+                DrawSurface((int)position.X, (int)position.Y, surface);
+            }
 
+            /// <summary>
+            /// Traza una superficie en este canvas en la posicion dada
+            /// </summary>
+            /// <param name="x">Coordenada X en donde se trazara la superfice dentro del canvas</param>
+            /// <param name="y">Coordenada Y en donde se trazara la superfice dentro del canvas</param>
+            /// <param name="surface">Superficie (imagen) a trazar</param>
+            public void DrawSurface(int x, int y, Bitmap surface)
+            {
                 Graphics g = Graphics.FromImage(surface);
                 g.DrawImageUnscaled(this.surface, x, y);
                 g.Dispose();
             }
 
+            /// <summary>
+            /// Traza una imagen en este canvas en la posicion dada
+            /// </summary>
+            /// <param name="position">Coordenada (x, y) en donde se trazara la superfice dentro del canvas</param>
+            /// <param name="name">Imagen, cargada con LoadImage, a trazar</param>
+            public void DrawImage(PointF position, String name)
+            {
+                DrawImage((int)position.X, (int)position.Y, name);
+            }
+
+            /// <summary>
+            /// Traza una imagen en este canvas en la posicion dada
+            /// </summary>
+            /// <param name="x">Coordenada X en donde se trazara la superfice dentro del canvas</param>
+            /// <param name="y">Coordenada Y en donde se trazara la superfice dentro del canvas</param>
+            /// <param name="name">Imagen, cargada con LoadImage, a trazar</param>
+            public void DrawImage(int x, int y, String name)
+            {
+                //Bitmap surface = 
+                Graphics g = Graphics.FromImage(surface);
+                g.DrawImageUnscaled(this.surface, x, y);
+                g.Dispose();
+            }
         }
     }
 }

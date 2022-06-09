@@ -20,10 +20,10 @@ namespace test
                 lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
-                lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
-                lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
-                lge.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
-                lge.LoadImage("bird", resourceDir + "/images/BlueBird/frame-*.png", 0.04f, false, false);
+                lge.imagesManager.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
+                lge.imagesManager.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
+                lge.imagesManager.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
+                lge.imagesManager.LoadImage("bird", resourceDir + "/images/BlueBird/frame-*.png", 0.04f, false, false);
                 lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                 // agregamos el fondo

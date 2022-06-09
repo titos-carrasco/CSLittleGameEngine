@@ -22,9 +22,9 @@ namespace test
                     lge.onMainUpdate = OnMainUpdate;
 
                     // cargamos los recursos que usaremos
-                    lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
-                    lge.LoadImage("heroe_right", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
-                    lge.LoadImage("heroe_left", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, true, false);
+                    lge.imagesManager.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
+                    lge.imagesManager.LoadImage("heroe_right", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
+                    lge.imagesManager.LoadImage("heroe_left", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, true, false);
                     lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                     // agregamos el fondo

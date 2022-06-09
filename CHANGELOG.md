@@ -1,5 +1,9 @@
 # Changelog
 
+## 2022-06-09
+
+- Crea clase ImagesManager para el manejo de imagen sacando el código de LittlegameEngine.cs
+
 ## 2022-06-07
 
 - Corrige Refresh en Linux

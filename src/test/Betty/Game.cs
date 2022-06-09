@@ -23,13 +23,13 @@ namespace test
                 // lge.ShowColliders(Color.Red);
 
                 // cargamos los recursos que usaremos
-                lge.LoadImage("fondo", resourceDir + "/images/Betty/Fondo.png", false, false);
-                lge.LoadImage("betty_idle", resourceDir + "/images/Betty/idle-0*.png", false, false);
-                lge.LoadImage("betty_down", resourceDir + "/images/Betty/down-0*.png", false, false);
-                lge.LoadImage("betty_up", resourceDir + "/images/Betty/up-0*.png", false, false);
-                lge.LoadImage("betty_left", resourceDir + "/images/Betty/left-0*.png", false, false);
-                lge.LoadImage("betty_right", resourceDir + "/images/Betty/right-0*.png", false, false);
-                lge.LoadImage("zombie", resourceDir + "/images/Kenny/Zombie/zombie_walk*.png", false, false);
+                lge.imagesManager.LoadImage("fondo", resourceDir + "/images/Betty/Fondo.png", false, false);
+                lge.imagesManager.LoadImage("betty_idle", resourceDir + "/images/Betty/idle-0*.png", false, false);
+                lge.imagesManager.LoadImage("betty_down", resourceDir + "/images/Betty/down-0*.png", false, false);
+                lge.imagesManager.LoadImage("betty_up", resourceDir + "/images/Betty/up-0*.png", false, false);
+                lge.imagesManager.LoadImage("betty_left", resourceDir + "/images/Betty/left-0*.png", false, false);
+                lge.imagesManager.LoadImage("betty_right", resourceDir + "/images/Betty/right-0*.png", false, false);
+                lge.imagesManager.LoadImage("zombie", resourceDir + "/images/Kenny/Zombie/zombie_walk*.png", false, false);
                 lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                 // agregamos el fondo

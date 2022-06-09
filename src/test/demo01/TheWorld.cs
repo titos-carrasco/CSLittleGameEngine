@@ -23,8 +23,8 @@ namespace test
                    //lge.ShowColliders(Color.Red);
 
                     // cargamos los recursos que usaremos
-                    lge.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
-                    lge.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
+                    lge.imagesManager.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
+                    lge.imagesManager.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
                     lge.LoadSound("fondo", resourceDir + "/sounds/happy-and-sad.wav");
                     lge.LoadSysFont("banner", "Comic Sans MS", FontStyle.Regular, 30);
                     lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);

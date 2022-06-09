@@ -19,12 +19,12 @@ namespace test
                 lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
-                lge.LoadImage("fondo", resourceDir + "/fondo.png", false, false);
-                lge.LoadImage("ninja-idle-right", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, false, false);
-                lge.LoadImage("ninja-idle-left", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, true, false);
-                lge.LoadImage("ninja-run-right", resourceDir + "/NinjaGirl/Run_*.png", 0.1f, false, false);
-                lge.LoadImage("ninja-run-left", resourceDir + "/NinjaGirl/Run_*.png", 0.1f, true, false);
-                lge.LoadImage("platform", resourceDir + "/platform.png", 0.3f, false, false);
+                lge.imagesManager.LoadImage("fondo", resourceDir + "/fondo.png", false, false);
+                lge.imagesManager.LoadImage("ninja-idle-right", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, false, false);
+                lge.imagesManager.LoadImage("ninja-idle-left", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, true, false);
+                lge.imagesManager.LoadImage("ninja-run-right", resourceDir + "/NinjaGirl/Run_*.png", 0.1f, false, false);
+                lge.imagesManager.LoadImage("ninja-run-left", resourceDir + "/NinjaGirl/Run_*.png", 0.1f, true, false);
+                lge.imagesManager.LoadImage("platform", resourceDir + "/platform.png", 0.3f, false, false);
 
                 // el fondo
                 Sprite fondo = new Sprite("fondo", new PointF(0, 0));
