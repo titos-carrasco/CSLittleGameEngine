@@ -51,7 +51,7 @@ namespace rcr
                 if (loop)
                     sounds[name].PlayLooping();
                 else
-                    sounds[name].PlayLooping();
+                    sounds[name].Play();
             }
 
             /// <summary>

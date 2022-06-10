@@ -69,18 +69,18 @@ namespace rcr
 
                 foreach (String fname in fnames)
                 {
-                    Bitmap b = new Bitmap(fname);
+                    Bitmap bmp = new Bitmap(fname);
 
-                    Bitmap bmp = new Bitmap(size.Width, size.Height);
-                    Graphics g = Graphics.FromImage(bmp);
+                    Bitmap image = new Bitmap(size.Width, size.Height, PixelFormat.Format32bppPArgb);
+                    Graphics g = Graphics.FromImage(image);
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(b, 0, 0, size.Width, size.Height);
+                    g.DrawImage(bmp, 0, 0, size.Width, size.Height);
                     g.Dispose();
 
-                    b.Dispose();
+                    bmp.Dispose();
 
-                    FlipImage(bmp, flipX, flipY);
-                    bitmaps.Add(bmp);
+                    FlipImage(image, flipX, flipY);
+                    bitmaps.Add(image);
                 }
                 this.images.Add(iname, bitmaps.ToArray());
             }
@@ -101,20 +101,20 @@ namespace rcr
 
                 foreach (String fname in fnames)
                 {
-                    Bitmap b = new Bitmap(fname);
-                    int width = (int)Math.Round(b.Width * scale);
-                    int height = (int)Math.Round(b.Height * scale);
+                    Bitmap bmp = new Bitmap(fname);
+                    int width = (int)Math.Round(bmp.Width * scale);
+                    int height = (int)Math.Round(bmp.Height * scale);
 
-                    Bitmap bmp = new Bitmap(width, height);
-                    Graphics g = Graphics.FromImage(bmp);
+                    Bitmap image = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
+                    Graphics g = Graphics.FromImage(image);
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(b, 0, 0, width, height);
+                    g.DrawImage(bmp, 0, 0, width, height);
                     g.Dispose();
 
-                    b.Dispose();
+                    bmp.Dispose();
 
-                    FlipImage(bmp, flipX, flipY);
-                    bitmaps.Add(bmp);
+                    FlipImage(image, flipX, flipY);
+                    bitmaps.Add(image);
                 }
                 this.images.Add(iname, bitmaps.ToArray());
             }
