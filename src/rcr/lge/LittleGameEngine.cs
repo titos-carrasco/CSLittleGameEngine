@@ -40,8 +40,11 @@ namespace rcr
             private readonly bool[] mouseButtons = { false, false, false };
             private readonly Nullable<Point>[] mouseClicks = { null, null, null };
 
+            /// <value>Manejador de imagenes</value>
             public readonly ImageManager imageManager;
+            /// <value>Manejador de tipos de letras</value>
             public readonly FontManager fontManager;
+            /// <value>Manejador de sonidos</value>
             public readonly SoundManager soundManager;
 
             private readonly Color bgColor;
@@ -210,6 +213,9 @@ namespace rcr
                 stopwatch.Start();
                 AutoResetEvent autoResetEvent = new AutoResetEvent(false);
 
+                if (isWindows)
+                    TimeBeginPeriod(1);
+
                 running = true;
                 while (running)
                 {
@@ -218,16 +224,7 @@ namespace rcr
                     // --- nos ajustamos a 1/fps
                     long t = tExpected - stopwatch.ElapsedMilliseconds;
                     if (t > 0)
-                    {
-                        if (isWindows)
-                        {
-                            TimeBeginPeriod(1);
-                            autoResetEvent.WaitOne((int)t);
-                            TimeEndPeriod(1);
-                        }
-                        else
-                            autoResetEvent.WaitOne((int)t);
-                    }
+                        autoResetEvent.WaitOne((int)t);
 
                     // --- tiempo desde el ciclo anterior
                     float dt = stopwatch.ElapsedMilliseconds / 1000.0f;
@@ -415,6 +412,9 @@ namespace rcr
                         )
                     );
                 }
+
+                if (isWindows)
+                    TimeEndPeriod(1);
 
                 // --- gobj.OnQuit
                 foreach (KeyValuePair<int, List<GameObject>> elem in gLayers)
