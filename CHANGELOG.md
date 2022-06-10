@@ -2,7 +2,19 @@
 
 ## 2022-06-09
 
-- Crea clase ImagesManager para el manejo de imagen sacando el código de LittlegameEngine.cs
+- Crea clase ImagesManager para el manejo de imagen
+- Crea clase SoundManager para el manejo de sonidos
+- Crea clase Fontmanager para el manejo de fonts
+- Manejo de imágenes, sonido y fonts se llevan a las clases señaladas
+- Canvas agrega método para mostrar imágenes precargadas
+- Se corrigen los demos acorde a lo anterior
+- Pendientes Linux:
+  - truetype Fonts no se visualizan
+  - Sonidos cortos no se reproducen
+  - Flipping de imágenes
+  - No cierra bien a veces con sonido habilitado
+- Pendientes en Windows:
+  - Probar todos los cambios
 
 ## 2022-06-07
 

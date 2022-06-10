@@ -23,13 +23,13 @@ namespace test
                     lge.onMainUpdate = OnMainUpdate;
 
                     // cargamos los recursos que usaremos
-                    lge.imagesManager.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
-                    lge.imagesManager.LoadImage("heroe_idle_right", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, false, false);
-                    lge.imagesManager.LoadImage("heroe_idle_left", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, true, false);
-                    lge.imagesManager.LoadImage("heroe_run_right", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, false, false);
-                    lge.imagesManager.LoadImage("heroe_run_left", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, true, false);
-                    lge.imagesManager.LoadImage("ninja", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
-                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
+                    lge.imageManager.LoadImages("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", false, false);
+                    lge.imageManager.LoadImages("heroe_idle_right", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, false, false);
+                    lge.imageManager.LoadImages("heroe_idle_left", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.16f, true, false);
+                    lge.imageManager.LoadImages("heroe_run_right", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, false, false);
+                    lge.imageManager.LoadImages("heroe_run_left", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, true, false);
+                    lge.imageManager.LoadImages("ninja", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
+                    lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -89,7 +89,7 @@ namespace test
                 // show time
                 public static void Main()
                 {
-                    Colliders game = new Colliders(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
+                    Colliders game = new Colliders(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources");
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");
                 }

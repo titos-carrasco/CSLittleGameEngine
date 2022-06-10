@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Text;
 
 namespace rcr
 {
@@ -31,7 +32,7 @@ namespace rcr
             public Canvas(PointF origin, SizeF size, String name) :
                 base(origin, size, name)
             {
-                surface = ImagesManager.CreateTranslucentImage((int)size.Width, (int)size.Height);
+                surface = ImageManager.CreateTranslucentImage((int)size.Width, (int)size.Height);
             }
 
             /// <summary>
@@ -60,9 +61,9 @@ namespace rcr
                 int y = (int)position.Y;
                 Graphics g = Graphics.FromImage(surface);
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                Font f = lge.GetFont(fname);
+                Font font = lge.fontManager.GetFont(fname);
                 SolidBrush brush = new SolidBrush(color);
-                g.DrawString(text, f, brush, new Point(x, y));
+                g.DrawString(text, font, brush, new Point(x, y));
                 brush.Dispose();
                 g.Dispose();
             }
@@ -166,9 +167,9 @@ namespace rcr
             /// </summary>
             /// <param name="position">Coordenada (x, y) en donde se trazara la superfice dentro del canvas</param>
             /// <param name="name">Imagen, cargada con LoadImage, a trazar</param>
-            public void DrawImage(PointF position, String name)
+            public void DrawImage(PointF position, String name, int idx = 0)
             {
-                DrawImage((int)position.X, (int)position.Y, name);
+                DrawImage((int)position.X, (int)position.Y, name, idx);
             }
 
             /// <summary>
@@ -177,9 +178,10 @@ namespace rcr
             /// <param name="x">Coordenada X en donde se trazara la superfice dentro del canvas</param>
             /// <param name="y">Coordenada Y en donde se trazara la superfice dentro del canvas</param>
             /// <param name="name">Imagen, cargada con LoadImage, a trazar</param>
-            public void DrawImage(int x, int y, String name)
+            public void DrawImage(int x, int y, String name, int idx = 0)
             {
-                //Bitmap surface = 
+                LittleGameEngine lge = LittleGameEngine.GetInstance();
+                Bitmap surface = lge.imageManager.GetImages(name)[idx];
                 Graphics g = Graphics.FromImage(surface);
                 g.DrawImageUnscaled(this.surface, x, y);
                 g.Dispose();

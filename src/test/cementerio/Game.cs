@@ -19,12 +19,12 @@ namespace test
                 lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
-                lge.imagesManager.LoadImage("fondo", resourceDir + "/fondo.png", false, false);
-                lge.imagesManager.LoadImage("ninja-idle-right", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, false, false);
-                lge.imagesManager.LoadImage("ninja-idle-left", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, true, false);
-                lge.imagesManager.LoadImage("ninja-run-right", resourceDir + "/NinjaGirl/Run_*.png", 0.1f, false, false);
-                lge.imagesManager.LoadImage("ninja-run-left", resourceDir + "/NinjaGirl/Run_*.png", 0.1f, true, false);
-                lge.imagesManager.LoadImage("platform", resourceDir + "/platform.png", 0.3f, false, false);
+                lge.imageManager.LoadImages("fondo", resourceDir + "/fondo.png", false, false);
+                lge.imageManager.LoadImages("ninja-idle-right", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, false, false);
+                lge.imageManager.LoadImages("ninja-idle-left", resourceDir + "/NinjaGirl/Idle_*.png", 0.1f, true, false);
+                lge.imageManager.LoadImages("ninja-run-right", resourceDir + "/NinjaGirl/Run_*.png", 0.1f, false, false);
+                lge.imageManager.LoadImages("ninja-run-left", resourceDir + "/NinjaGirl/Run_*.png", 0.1f, true, false);
+                lge.imageManager.LoadImages("platform", resourceDir + "/platform.png", 0.3f, false, false);
 
                 // el fondo
                 Sprite fondo = new Sprite("fondo", new PointF(0, 0));
@@ -83,7 +83,7 @@ namespace test
             // show time
             public static void Main()
             {
-                Game game = new Game(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\cementerio\resources");
+                Game game = new Game(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/cementerio/resources");
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

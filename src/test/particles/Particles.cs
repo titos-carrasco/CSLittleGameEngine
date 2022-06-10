@@ -23,7 +23,7 @@ namespace test
                 lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
-                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
+                lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                 // agregamos la barra de info
                 Canvas infobar = new Canvas(new PointF(0, 0), new Size(800, 20), "infobar");

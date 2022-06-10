@@ -133,7 +133,7 @@ namespace rcr
                 {
                     if (!iname.Equals(this.iname))
                     {
-                        surfaces = lge.imagesManager.GetImages(iname);
+                        surfaces = lge.imageManager.GetImages(iname);
                         this.iname = iname;
                     }
 

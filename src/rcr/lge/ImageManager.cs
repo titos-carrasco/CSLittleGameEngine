@@ -1,17 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
 namespace rcr
 {
     namespace lge
     {
-        public class ImagesManager
+        /// <summary>
+        /// Manejador de imagenes en memoria
+        /// </summary>
+        public class ImageManager
         {
-            protected internal readonly Dictionary<String, Bitmap[]> images;
+            private readonly Dictionary<String, Bitmap[]> images;
 
-            public ImagesManager()
+            /// <summary>
+            /// Construye un objeto manejador de imagenes en memoria
+            /// </summary>
+            public ImageManager()
             {
                 images = new Dictionary<String, Bitmap[]>();
             }
@@ -25,7 +32,7 @@ namespace rcr
             {
                 return images[iname];
             }
-          
+
             /// <summary>
             /// Carga una imagen o grupo de imagenes
             /// </summary>
@@ -33,7 +40,7 @@ namespace rcr
             /// <param name="pattern">El patron de archivos para las imagenes a cargar (glob)</param>
             /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
             /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
-            public void LoadImage(String iname, String pattern, bool flipX, bool flipY)
+            public void LoadImages(String iname, String pattern, bool flipX, bool flipY)
             {
                 String[] fnames = LittleGameEngine.ExpandFilenames(pattern);
                 List<Bitmap> bitmaps = new List<Bitmap>();
@@ -55,7 +62,7 @@ namespace rcr
             /// <param name="size">Tamano a aplicar a la imagen</param>
             /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
             /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
-            public void LoadImage(String iname, String pattern, Size size, bool flipX, bool flipY)
+            public void LoadImages(String iname, String pattern, Size size, bool flipX, bool flipY)
             {
                 String[] fnames = LittleGameEngine.ExpandFilenames(pattern);
                 List<Bitmap> bitmaps = new List<Bitmap>();
@@ -63,7 +70,15 @@ namespace rcr
                 foreach (String fname in fnames)
                 {
                     Bitmap b = new Bitmap(fname);
-                    Bitmap bmp = new Bitmap(b, size.Width, size.Height);
+
+                    Bitmap bmp = new Bitmap(size.Width, size.Height);
+                    Graphics g = Graphics.FromImage(bmp);
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.DrawImage(b, 0, 0, size.Width, size.Height);
+                    g.Dispose();
+
+                    b.Dispose();
+
                     FlipImage(bmp, flipX, flipY);
                     bitmaps.Add(bmp);
                 }
@@ -78,7 +93,7 @@ namespace rcr
             /// <param name="scale">Factor de escala de la imagen</param>
             /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
             /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
-            public void LoadImage(String iname, String pattern, float scale, bool flipX, bool flipY)
+            public void LoadImages(String iname, String pattern, float scale, bool flipX, bool flipY)
             {
 
                 String[] fnames = LittleGameEngine.ExpandFilenames(pattern);
@@ -87,7 +102,17 @@ namespace rcr
                 foreach (String fname in fnames)
                 {
                     Bitmap b = new Bitmap(fname);
-                    Bitmap bmp = new Bitmap(b, (int)(b.Width * scale), (int)(b.Height * scale));
+                    int width = (int)Math.Round(b.Width * scale);
+                    int height = (int)Math.Round(b.Height * scale);
+
+                    Bitmap bmp = new Bitmap(width, height);
+                    Graphics g = Graphics.FromImage(bmp);
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.DrawImage(b, 0, 0, width, height);
+                    g.Dispose();
+
+                    b.Dispose();
+
                     FlipImage(bmp, flipX, flipY);
                     bitmaps.Add(bmp);
                 }
@@ -100,8 +125,8 @@ namespace rcr
             /// <param name="bitmap">La imagen a invertir</param>
             /// <param name="flipX">Si es verdadero se invierte en el eje X</param>
             /// <param name="flipY">Si es verdadero se invierte en el eje Y</param>
-            /// 
-            static private void FlipImage(Bitmap bitmap, bool flipX, bool flipY)
+            ///
+            static public void FlipImage(Bitmap bitmap, bool flipX, bool flipY)
             {
                 if (flipX)
                     bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
@@ -115,7 +140,7 @@ namespace rcr
             /// <param name="width">El ancho de la imagen</param>
             /// <param name="height">El alto de la imagen</param>
             /// <returns>La imagen sin transparencia</returns>
-            static protected internal Bitmap CreateOpaqueImage(int width, int height)
+            static public Bitmap CreateOpaqueImage(int width, int height)
             {
                 return new Bitmap(width, height, PixelFormat.Format32bppRgb);
             }
@@ -126,7 +151,7 @@ namespace rcr
             /// <param name="width">El ancho de la imagen</param>
             /// <param name="height">El alto de la imagen</param>
             /// <returns>La imagen con transparencia</returns>
-            static protected internal Bitmap CreateTranslucentImage(int width, int height)
+            static public Bitmap CreateTranslucentImage(int width, int height)
             {
                 return new Bitmap(width, height, PixelFormat.Format32bppArgb);
             }

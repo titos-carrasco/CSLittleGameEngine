@@ -20,11 +20,11 @@ namespace test
                 lge.onMainUpdate = OnMainUpdate;
 
                 // cargamos los recursos que usaremos
-                lge.imagesManager.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
-                lge.imagesManager.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
-                lge.imagesManager.LoadImage("mute", resourceDir + "/images/icons/sound-*.png", false, false);
-                lge.imagesManager.LoadImage("bird", resourceDir + "/images/BlueBird/frame-*.png", 0.04f, false, false);
-                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
+                lge.imageManager.LoadImages("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
+                lge.imageManager.LoadImages("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
+                lge.imageManager.LoadImages("mute", resourceDir + "/images/icons/sound-*.png", false, false);
+                lge.imageManager.LoadImages("bird", resourceDir + "/images/BlueBird/frame-*.png", 0.04f, false, false);
+                lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                 // agregamos el fondo
                 Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -82,7 +82,7 @@ namespace test
             // show time
             public static void Main()
             {
-                Birds game = new Birds(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
+                Birds game = new Birds(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources/");
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

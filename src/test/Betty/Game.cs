@@ -23,14 +23,15 @@ namespace test
                 // lge.ShowColliders(Color.Red);
 
                 // cargamos los recursos que usaremos
-                lge.imagesManager.LoadImage("fondo", resourceDir + "/images/Betty/Fondo.png", false, false);
-                lge.imagesManager.LoadImage("betty_idle", resourceDir + "/images/Betty/idle-0*.png", false, false);
-                lge.imagesManager.LoadImage("betty_down", resourceDir + "/images/Betty/down-0*.png", false, false);
-                lge.imagesManager.LoadImage("betty_up", resourceDir + "/images/Betty/up-0*.png", false, false);
-                lge.imagesManager.LoadImage("betty_left", resourceDir + "/images/Betty/left-0*.png", false, false);
-                lge.imagesManager.LoadImage("betty_right", resourceDir + "/images/Betty/right-0*.png", false, false);
-                lge.imagesManager.LoadImage("zombie", resourceDir + "/images/Kenny/Zombie/zombie_walk*.png", false, false);
-                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
+                lge.imageManager.LoadImages("fondo", resourceDir + "/images/Betty/Fondo.png", false, false);
+                lge.imageManager.LoadImages("betty_idle", resourceDir + "/images/Betty/idle-0*.png", false, false);
+                lge.imageManager.LoadImages("betty_down", resourceDir + "/images/Betty/down-0*.png", false, false);
+                lge.imageManager.LoadImages("betty_up", resourceDir + "/images/Betty/up-0*.png", false, false);
+                lge.imageManager.LoadImages("betty_left", resourceDir + "/images/Betty/left-0*.png", false, false);
+                lge.imageManager.LoadImages("betty_right", resourceDir + "/images/Betty/right-0*.png", false, false);
+                lge.imageManager.LoadImages("zombie", resourceDir + "/images/Kenny/Zombie/zombie_walk*.png", false, false);
+                lge.fontManager.LoadTTFont("monospace", resourceDir + "/fonts/FreeMono.ttf", FontStyle.Regular, 10);
+                //lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                 // agregamos el fondo
                 Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -110,7 +111,7 @@ namespace test
             // show time
             public static void Main()
             {
-                Game game = new Game(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
+                Game game = new Game(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources");
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

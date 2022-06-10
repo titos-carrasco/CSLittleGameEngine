@@ -23,18 +23,18 @@ namespace test
                    //lge.ShowColliders(Color.Red);
 
                     // cargamos los recursos que usaremos
-                    lge.imagesManager.LoadImage("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
-                    lge.imagesManager.LoadImage("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
-                    lge.LoadSound("fondo", resourceDir + "/sounds/happy-and-sad.wav");
-                    lge.LoadSysFont("banner", "Comic Sans MS", FontStyle.Regular, 30);
-                    lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
+                    lge.imageManager.LoadImages("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
+                    lge.imageManager.LoadImages("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
+                    lge.soundManager.LoadSound("fondo", resourceDir + "/sounds/happy-and-sad.wav");
+                    lge.fontManager.LoadSysFont("banner", "Comic Sans MS", FontStyle.Regular, 30);
+                    lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0));
                     lge.AddGObject(fondo, 0);
 
                     // activamos la nusica de fondo
-                    lge.PlaySound("fondo", true, 1);
+                    lge.soundManager.PlaySound("fondo", true, 1);
 
                     // agregamos la barra de info
                     Canvas infobar = new Canvas(new PointF(0, 0), new Size(800, 20), "infobar");
@@ -88,7 +88,7 @@ namespace test
                 // show time
                 public static void Main()
                 {
-                    TheWorld game = new TheWorld(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
+                    TheWorld game = new TheWorld(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources/");
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");
                 }

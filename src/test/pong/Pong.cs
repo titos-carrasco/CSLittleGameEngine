@@ -23,8 +23,8 @@ namespace test
                 // lge.ShowColliders(Color.Red);
 
                 // cargamos los recursos que usaremos
-                lge.LoadSound("pong", resourceDir + @"/sounds/4391__noisecollector__pongblipf-5.wav");
-                lge.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
+                lge.soundManager.LoadSound("pong", resourceDir + "/sounds/4391__noisecollector__pongblipf-5.wav");
+                lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
                 // agregamos la barra de info
                 Canvas infobar = new Canvas(new PointF(0, 0), new Size(640, 20), "infobar");
@@ -141,7 +141,7 @@ namespace test
             // show time
             public static void Main()
             {
-                Pong game = new Pong(@"C:\Users\rcarrascor\Documents\MyProjects\CSLittleGameEngine\src\test\resources");
+                Pong game = new Pong(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources");
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

@@ -2,11 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
 using System.IO;
-using System.Media;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -44,10 +40,9 @@ namespace rcr
             private readonly bool[] mouseButtons = { false, false, false };
             private readonly Nullable<Point>[] mouseClicks = { null, null, null };
 
-            public readonly ImagesManager imagesManager;
-            private readonly Dictionary<String, Font> fonts;
-            private readonly PrivateFontCollection ttfFonts;
-            private readonly Dictionary<String, SoundPlayer> sounds;
+            public readonly ImageManager imageManager;
+            public readonly FontManager fontManager;
+            public readonly SoundManager soundManager;
 
             private readonly Color bgColor;
             private Nullable<Color> collidersColor = null;
@@ -85,10 +80,9 @@ namespace rcr
 
                 this.bgColor = bgColor;
 
-                imagesManager = new ImagesManager();
-                fonts = new Dictionary<String, Font>();
-                ttfFonts = new PrivateFontCollection();
-                sounds = new Dictionary<String, SoundPlayer>();
+                imageManager = new ImageManager();
+                fontManager = new FontManager();
+                soundManager = new SoundManager();
 
                 keysPressed = new Dictionary<Keys, bool>();
 
@@ -100,7 +94,7 @@ namespace rcr
                 camera = new Camera(new PointF(0, 0), winSize);
 
                 screenSpeed = new Stopwatch();
-                screen = ImagesManager.CreateOpaqueImage(winSize.Width, winSize.Height);
+                screen = ImageManager.CreateOpaqueImage(winSize.Width, winSize.Height);
                 Graphics g = Graphics.FromImage(screen);
                 g.Clear(bgColor);
                 g.Dispose();
@@ -208,7 +202,7 @@ namespace rcr
                 bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
 
                 screenSpeed.Start();
-                Bitmap screenImage = ImagesManager.CreateOpaqueImage(winSize.Width, winSize.Height);
+                Bitmap screenImage = ImageManager.CreateOpaqueImage(winSize.Width, winSize.Height);
 
                 long tExpected = 1000 / fps;
 
@@ -741,128 +735,11 @@ namespace rcr
                 }
             }
 
-            // ------ fonts ------
-
-            /// <summary>
-            /// Obtiene los tipos de letra del sistema
-            /// </summary>
-            /// <returns>Los tipos de letra</returns>
-            static public String[] GetSysFonts()
-            {
-                List<String> sysfonts = new List<String>();
-                InstalledFontCollection ifc = new InstalledFontCollection();
-                foreach (FontFamily fa in ifc.Families)
-                    sysfonts.Add(fa.Name);
-                ifc.Dispose();
-                return sysfonts.ToArray();
-            }
-
-            /// <summary>
-            /// Carga un tipo de letra del sistema para ser utilizado en el juego
-            /// </summary>
-            /// <param name="name">El nombre interno a asignar</param>
-            /// <param name="fname">El nombre del tipo de letra</param>
-            /// <param name="fstyle">El estilo a aplicar</param>
-            /// <param name="fsize">El tamano a asignar</param>
-            public void LoadSysFont(String name, String fname, FontStyle fstyle, int fsize)
-            {
-                FontFamily fontFamily = new FontFamily(fname);
-                Font font = new Font(fontFamily, fsize, fstyle);
-                fonts.Add(name, font);
-            }
-
-            /// <summary>
-            /// Carga un tipo de letra TTF desde un archivo para ser utilizado en el juego
-            /// </summary>
-            /// <param name="name">El nombre interno a asignar</param>
-            /// <param name="fname">El nombre del archivo a cargar</param>
-            /// <param name="fstyle">El estilo a aplicar</param>
-            /// <param name="fsize">El tamano a asignar</param>
-            public void LoadTTFont(String name, String fname, FontStyle fstyle, int fsize)
-            {
-                ttfFonts.AddFontFile(fname);
-                FontFamily fontFamily = new FontFamily(ttfFonts.Families[ttfFonts.Families.Length - 1].Name, ttfFonts);
-                Font font = new Font(fontFamily, fsize, fstyle);
-                fonts.Add(name, font);
-            }
-
-            /// <summary>
-            /// Recupera un tipo de letra previamente cargado
-            /// </summary>
-            /// <param name="name">El nombre del tipo de letra a recuperar</param>
-            /// <returns>El tipo de letra</returns>
-            public Font GetFont(String name)
-            {
-                return fonts[name];
-            }
-
-            // ------ sounds ------
-
-            /// <summary>
-            /// Carga un archivo de sonido para ser utilizado durante el juego
-            /// </summary>
-            /// <param name="name">Nombre a asignar al sonido</param>
-            /// <param name="fname">Nombre del archivo que contiene el sonido</param>
-            public void LoadSound(String name, String fname)
-            {
-                fname = FixDirectorySeparatorChar(fname);
-                SoundPlayer soundPlayer = new SoundPlayer(fname);
-                soundPlayer.Load();
-                while (!soundPlayer.IsLoadCompleted)
-                    Thread.Sleep(1);
-                sounds.Add(name, soundPlayer);
-            }
-
-            /// <summary>
-            /// Inicia la reproduccion de un sonido
-            /// </summary>
-            /// <param name="name">Nombre del sonido (previamente cargado) a reproducir</param>
-            /// <param name="loop">Verdadero para reproducirlo en loop</param>
-            /// <param name="level">Volumen 0.0 a 1.0</param>
-            public void PlaySound(String name, bool loop, float level)
-            {
-                if (loop)
-                    sounds[name].PlayLooping();
-                else
-                    sounds[name].Play();
-            }
-
-            /// <summary>
-            /// Detiene la reproducción del sonido especificado
-            /// </summary>
-            /// <param name="name">El nombre del sonido a detener</param>
-            public void StopSound(String name)
-            {
-                sounds[name].Stop();
-            }
-
-            /// <summary>
-            /// Establece el volumen de un sonido (no implementada)
-            /// </summary>
-            /// <param name="name">Nombre del sonido</param>
-            /// <param name="level">Volumen 0.0 a 1.0</param>
-            public void SetSoundVolume(String name, float level)
-            {
-
-            }
-
-            /// <summary>
-            /// Obtiene el volumen de un sonido
-            /// </summary>
-            /// <param name="name">Nombre del sonido</param>
-            /// <returns>Volumen del sonido 0.0 a 1.0</returns>
-            public float GetSoundVolume(String name)
-            {
-                return 0;
-            }
-
-            // ------ images ------
-
-            // ------ FORM ------
+            // ------ form ------
 
             /// <summary>
             /// Reacciona al evento OnPaint
-            /// 
+            ///
             /// <para>Todo el despliegue ocurre aqui junto con calcular los FPS</para>
             /// </summary>
             /// <param name="e">La data del evento</param>
@@ -886,7 +763,6 @@ namespace rcr
                     g.DrawImageUnscaled(screen, 0, 0);
                 }
             }
-
 
             /// <summary>
             /// Reacciona al evento OnPaintBackground
@@ -929,7 +805,6 @@ namespace rcr
             /// <returns>Los nombres de archivos cubiertos por el patron</returns>
             static protected internal String[] ExpandFilenames(String pattern)
             {
-
                 pattern = FixDirectorySeparatorChar(pattern);
 
                 String dir = Path.GetDirectoryName(pattern);
