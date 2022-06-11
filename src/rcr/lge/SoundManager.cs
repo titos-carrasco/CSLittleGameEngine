@@ -7,6 +7,9 @@ namespace rcr
 {
     namespace lge
     {
+        /// <summary>
+        /// Manejador de sonidos
+        /// </summary>
         public class SoundManager
         {
             /// <summary>

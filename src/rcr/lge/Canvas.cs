@@ -166,7 +166,8 @@ namespace rcr
             /// Traza una imagen en este canvas en la posicion dada
             /// </summary>
             /// <param name="position">Coordenada (x, y) en donde se trazara la superfice dentro del canvas</param>
-            /// <param name="name">Imagen, cargada con LoadImage, a trazar</param>
+            /// <param name="name">Nombre del grupo de imagenes, cargada con LoadImage</param>
+            /// <param name="idx">Indice dentro del grupo de imagenes</param>
             public void DrawImage(PointF position, String name, int idx = 0)
             {
                 DrawImage((int)position.X, (int)position.Y, name, idx);
@@ -177,7 +178,8 @@ namespace rcr
             /// </summary>
             /// <param name="x">Coordenada X en donde se trazara la superfice dentro del canvas</param>
             /// <param name="y">Coordenada Y en donde se trazara la superfice dentro del canvas</param>
-            /// <param name="name">Imagen, cargada con LoadImage, a trazar</param>
+            /// <param name="name">Nombre del grupo de imagenes, cargada con LoadImage</param>
+            /// <param name="idx">Indice dentro del grupo de imagenes</param>
             public void DrawImage(int x, int y, String name, int idx = 0)
             {
                 LittleGameEngine lge = LittleGameEngine.GetInstance();
