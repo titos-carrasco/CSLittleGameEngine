@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.1 2022-06-11
+
+- Reemplaza todos los build.sh por Makefile
+
 ## 2022-06-10
 
 - Mueve TimeBeginPeriod() y TimeEndPeriod() al inicio y fin de la tarea TRun()
