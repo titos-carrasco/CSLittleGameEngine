@@ -1,7 +1,14 @@
 # Changelog
 
+## 2022-06-17
+
+- Mueve todo el manejo de sonido a librería NAudio
+- Habilita sonidos en demos
+- Mueve especificación de directorio de recursos como parámentro en la línea de comando
+
 ## 2022-06-10
 
+- Mueve TimeBeginPeriod() y TimeEndPeriod() al inicio y fin de la tarea TRun()
 - Corrige error en reproducción de sonido
 - Pruebas OK en Windows: Sonidos, TTF y y flipping funciona bien
 - Corrige problema en Linux/Mono al realizar flipping. Las imágenes que fueron escaladas deben ser copiadas previamente a un bitmap con format Format32bppPArgb para que el flipping resulte bien

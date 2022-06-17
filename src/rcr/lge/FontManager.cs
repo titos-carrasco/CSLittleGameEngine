@@ -48,7 +48,7 @@ namespace rcr
             /// <param name="fsize">El tamano a asignar</param>
             public void LoadTTFont(String name, String fname, FontStyle fstyle, int fsize)
             {
-                fname = LittleGameEngine.FixDirectorySeparatorChar(fname);
+                fname = fname.Replace('\\', '/');
                 ttFonts.AddFontFile(fname);
                 FontFamily fontFamily = new FontFamily(ttFonts.Families[ttFonts.Families.Length - 1].Name, ttFonts);
                 Font font = new Font(fontFamily, fsize, fstyle);

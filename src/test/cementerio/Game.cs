@@ -81,9 +81,10 @@ namespace test
             }
 
             // show time
-            public static void Main()
+            public static void Main(String[] args)
             {
-                Game game = new Game(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/cementerio/resources");
+                String resourceDir = args[0];
+                Game game = new Game(resourceDir);
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

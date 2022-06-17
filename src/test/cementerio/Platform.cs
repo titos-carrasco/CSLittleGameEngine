@@ -10,8 +10,8 @@ namespace test
         public class Platform : Sprite
         {
             char dir;
-            private float pixels;
-            private float distance;
+            private readonly float pixels;
+            private readonly float distance;
             private float travel = 0;
 
             public Platform(float x, float y, char dir, float distance, float speed) :
@@ -46,17 +46,17 @@ namespace test
 
                 float d = pixels * dt;
                 if (dir == 'R')
-                    x = x + d;
+                    x += d;
                 else if (dir == 'L')
-                    x = x - d;
+                    x -= d;
                 else if (dir == 'D')
-                    y = y + d;
+                    y += d;
                 else if (dir == 'U')
-                    y = y - d;
+                    y -= d;
 
                 SetPosition(x, y);
 
-                travel = travel + d;
+                travel += d;
                 if (travel > distance)
                 {
                     travel = 0;

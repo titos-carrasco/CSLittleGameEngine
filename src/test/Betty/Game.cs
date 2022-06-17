@@ -42,7 +42,8 @@ namespace test
                 lge.AddGObjectGUI(infobar);
 
                 // cargamos el mapa en memoria
-                string[] lines = System.IO.File.ReadAllLines(resourceDir + "/images/Betty/Mapa.txt");
+                String fname = resourceDir + "/images/Betty/Mapa.txt";
+                string[] lines = System.IO.File.ReadAllLines(fname.Replace('\\', '/'));
                 int x = 0, y = 0;
                 mapa = new int[22, 19];
                 foreach (string line in lines)
@@ -109,9 +110,10 @@ namespace test
             }
 
             // show time
-            public static void Main()
+            public static void Main(String[] args)
             {
-                Game game = new Game(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources");
+                String resourceDir = args[0];
+                Game game = new Game(resourceDir);
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

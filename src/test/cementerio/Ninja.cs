@@ -11,11 +11,11 @@ namespace test
         {
             private readonly LittleGameEngine lge;
             private RectangleF colisionador;
-            private float vx = 120;
+            private readonly float vx = 120;
             private float vy = 0;
-            private float vym = 500;
-            private float g = 480;
-            private float vsalto = 140;
+            private readonly float vym = 500;
+            private readonly float g = 480;
+            private readonly float vsalto = 140;
 
             public Ninja(float x, float y) :
                 base("ninja-idle-right", new PointF(x, y))
@@ -85,15 +85,15 @@ namespace test
                 {
                     SetImage("ninja-idle-right");
                 }
-                x = x + move_x * vx * dt;
+                x += move_x * vx * dt;
 
                 // siguiente imagen y su colisionador
                 NextImage(dt, 0.04f);
                 SetCollider(colisionador);
 
                 // ahora el movimiento en Y
-                y = y + vy * dt;
-                vy = vy + g * dt;
+                y += vy * dt;
+                vy += g * dt;
 
                 // nueva posicion
                 SetPosition(x, y);

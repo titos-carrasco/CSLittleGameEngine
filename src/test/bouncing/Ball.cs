@@ -43,7 +43,7 @@ namespace test
                     return;
                 }
 
-                vy = vy + g * dt;
+                vy += g * dt;
                 SetPosition(x, y);
             }
 

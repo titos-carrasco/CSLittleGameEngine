@@ -12,7 +12,7 @@ namespace test
             public class MiHeroe : Sprite
             {
                 private readonly LittleGameEngine lge;
-                GameObject ninja;
+                readonly GameObject ninja;
                 private int state = -1;
                 private PointF last;
 
@@ -43,7 +43,7 @@ namespace test
                     // cambiamos sus coordenadas, orientacion e imagen segun la tecla presionada
                     if (lge.KeyPressed(Keys.Right))
                     {
-                        x = x + pixels;
+                        x += pixels;
                         if (state != 2)
                         {
                             SetImage("heroe_run_right");
@@ -52,7 +52,7 @@ namespace test
                     }
                     else if (lge.KeyPressed(Keys.Left))
                     {
-                        x = x - pixels;
+                        x -= pixels;
                         if (state != -2)
                         {
                             SetImage("heroe_run_left");
@@ -92,6 +92,7 @@ namespace test
                 {
                     if (CollidesWith(ninja))
                     {
+                        lge.soundManager.PlaySound("poing", false);
                         SetPosition(last);
                     }
                 }

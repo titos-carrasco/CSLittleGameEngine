@@ -139,9 +139,10 @@ namespace test
             }
 
             // show time
-            public static void Main()
+            public static void Main(String[] args)
             {
-                Pong game = new Pong(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources");
+                String resourceDir = args[0];
+                Pong game = new Pong(resourceDir);
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

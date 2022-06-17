@@ -10,9 +10,9 @@ namespace test
         public class Particles
         {
             private readonly LittleGameEngine lge;
-            private Canvas panel;
-            int numParticles = 500;
-            Particle[] particles;
+            private readonly Canvas panel;
+            readonly int numParticles = 500;
+            readonly Particle[] particles;
 
             public Particles()
             {

@@ -29,6 +29,10 @@ namespace test
                     lge.imageManager.LoadImages("heroe_run_left", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, true, false);
                     lge.imageManager.LoadImages("mute", resourceDir + "/images/icons/sound-*.png", false, false);
                     lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
+                    lge.soundManager.LoadSound("fondo", resourceDir + "/sounds/happy-and-sad.wav");
+
+                    // activamos la musica de fondo
+                    lge.soundManager.PlaySound("fondo", true);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -80,9 +84,10 @@ namespace test
                 }
 
                 // show time
-                public static void Main()
+                public static void Main(String[] args)
                 {
-                    AnimatedPlayer game = new AnimatedPlayer(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources");
+                    String resourceDir = args[0];
+                    AnimatedPlayer game = new AnimatedPlayer(resourceDir);
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");
                 }

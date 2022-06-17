@@ -22,7 +22,6 @@ namespace test
                 // cargamos los recursos que usaremos
                 lge.imageManager.LoadImages("fondo", resourceDir + "/images/Backgrounds/FreeTileset/Fondo.png", winSize, false, false);
                 lge.imageManager.LoadImages("heroe", resourceDir + "/images/Swordsman/Idle/Idle_0*.png", 0.08f, false, false);
-                lge.imageManager.LoadImages("mute", resourceDir + "/images/icons/sound-*.png", false, false);
                 lge.imageManager.LoadImages("bird", resourceDir + "/images/BlueBird/frame-*.png", 0.04f, false, false);
                 lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
 
@@ -80,9 +79,10 @@ namespace test
             }
 
             // show time
-            public static void Main()
+            public static void Main(String[] args)
             {
-                Birds game = new Birds(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources/");
+                String resourceDir = args[0];
+                Birds game = new Birds(resourceDir);
                 game.Run(60);
                 Console.WriteLine("Eso es todo!!!");
             }

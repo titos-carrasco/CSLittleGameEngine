@@ -60,22 +60,22 @@ namespace test
                 if (lge.KeyPressed(Keys.Right))
                 {
                     SetImage("betty_right", idx);
-                    x = x + pixels;
+                    x += pixels;
                 }
                 else if (lge.KeyPressed(Keys.Left))
                 {
                     SetImage("betty_left", idx);
-                    x = x - pixels;
+                    x -= pixels;
                 }
                 else if (lge.KeyPressed(Keys.Up))
                 {
                     SetImage("betty_up", idx);
-                    y = y - pixels;
+                    y -= pixels;
                 }
                 else if (lge.KeyPressed(Keys.Down))
                 {
                     SetImage("betty_down", idx);
-                    y = y + pixels;
+                    y += pixels;
                 }
                 else
                 {

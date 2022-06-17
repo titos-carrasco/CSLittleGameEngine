@@ -421,6 +421,9 @@ namespace rcr
                     foreach (GameObject gobj in elem.Value)
                         gobj.OnQuit();
 
+                // --- apaga los sonidos
+                soundManager.StopAll();
+
                 // cerramos la ventana en caso de que siga abierta
                 this.Invoke(
                     new Action(
@@ -788,24 +791,13 @@ namespace rcr
             // ------ utils ------
 
             /// <summary>
-            /// Reemplaza, en una ruta de archivo, el caracter '/' por el adecuado al S.O.
-            /// </summary>
-            /// <param name="path">La ruta a corregir</param>
-            /// <returns></returns>
-            static protected internal String FixDirectorySeparatorChar(String path)
-            {
-                return path.Replace('/', Path.DirectorySeparatorChar);
-            }
-
-
-            /// <summary>
             /// Expande un patron de nombres de archivos tipo glob
             /// </summary>
             /// <param name="pattern">El patron a expandir</param>
             /// <returns>Los nombres de archivos cubiertos por el patron</returns>
             static protected internal String[] ExpandFilenames(String pattern)
             {
-                pattern = FixDirectorySeparatorChar(pattern);
+                pattern = pattern.Replace('\\', '/');
 
                 String dir = Path.GetDirectoryName(pattern);
                 String patt = Path.GetFileName(pattern);

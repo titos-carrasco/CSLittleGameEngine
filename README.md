@@ -6,8 +6,7 @@ Un pequeño motor de juegos para aprender C#
 
 ![Pong](images/Pong.png) ![Demo05](images/Demo05.png)
 
-## Pendientes Linux/Mono
+## Pendientes
 
-- Problemas con TTF en Linux/Mono no existen en VM debian bullseye
-- Sonidos cortos no se reproducen
-- No cierra bien a veces con sonido habilitado
+- Problemas con TTF en Linux/Mono/Debian/Bullseye
+- Probar NAudio

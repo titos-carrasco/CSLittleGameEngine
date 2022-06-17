@@ -42,16 +42,7 @@ namespace rcr
             /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
             public void LoadImages(String iname, String pattern, bool flipX, bool flipY)
             {
-                String[] fnames = LittleGameEngine.ExpandFilenames(pattern);
-                List<Bitmap> bitmaps = new List<Bitmap>();
-
-                foreach (String fname in fnames)
-                {
-                    Bitmap bmp = new Bitmap(fname);
-                    FlipImage(bmp, flipX, flipY);
-                    bitmaps.Add(bmp);
-                }
-                this.images.Add(iname, bitmaps.ToArray());
+                LoadImages(iname, pattern, 0, null, flipX, flipY);
             }
 
             /// <summary>
@@ -64,25 +55,7 @@ namespace rcr
             /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
             public void LoadImages(String iname, String pattern, Size size, bool flipX, bool flipY)
             {
-                String[] fnames = LittleGameEngine.ExpandFilenames(pattern);
-                List<Bitmap> bitmaps = new List<Bitmap>();
-
-                foreach (String fname in fnames)
-                {
-                    Bitmap bmp = new Bitmap(fname);
-
-                    Bitmap image = new Bitmap(size.Width, size.Height, PixelFormat.Format32bppPArgb);
-                    Graphics g = Graphics.FromImage(image);
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(bmp, 0, 0, size.Width, size.Height);
-                    g.Dispose();
-
-                    bmp.Dispose();
-
-                    FlipImage(image, flipX, flipY);
-                    bitmaps.Add(image);
-                }
-                this.images.Add(iname, bitmaps.ToArray());
+                LoadImages(iname, pattern, 0, size, flipX, flipY);
             }
 
             /// <summary>
@@ -95,15 +68,38 @@ namespace rcr
             /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
             public void LoadImages(String iname, String pattern, float scale, bool flipX, bool flipY)
             {
+                LoadImages(iname, pattern, scale, null, flipX, flipY);
+            }
 
+            /// <summary>
+            /// Carga una imagen o grupo de imagenes
+            /// </summary>
+            /// <param name="iname">el nombre interno a asignar a las imagenes cargadas.</param>
+            /// <param name="pattern">El patron de archivos para las imagenes a cargar (glob)</param>
+            /// <param name="scale">Factor de escala de la imagen</param>
+            /// <param name="size">Tamano a aplicar a la imagen</param>
+            /// <param name="flipX">Si es verdadero da vuelta la imagen en X</param>
+            /// <param name="flipY">Si es verdadero da vuelta la imagen en Y.</param>
+            private void LoadImages(String iname, String pattern, float scale, Size? size, bool flipX, bool flipY)
+            {
                 String[] fnames = LittleGameEngine.ExpandFilenames(pattern);
                 List<Bitmap> bitmaps = new List<Bitmap>();
 
                 foreach (String fname in fnames)
                 {
                     Bitmap bmp = new Bitmap(fname);
-                    int width = (int)Math.Round(bmp.Width * scale);
-                    int height = (int)Math.Round(bmp.Height * scale);
+                    int width = bmp.Width;
+                    int height = bmp.Height;
+                    if (scale > 0)
+                    {
+                        width = (int)Math.Round(bmp.Width * scale);
+                        height = (int)Math.Round(bmp.Height * scale);
+                    }
+                    else if( size!=null)
+                    {
+                        width = size.Value.Width;
+                        height = size.Value.Height;
+                    }
 
                     Bitmap image = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
                     Graphics g = Graphics.FromImage(image);

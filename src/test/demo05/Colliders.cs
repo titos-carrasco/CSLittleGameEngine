@@ -29,7 +29,14 @@ namespace test
                     lge.imageManager.LoadImages("heroe_run_right", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, false, false);
                     lge.imageManager.LoadImages("heroe_run_left", resourceDir + "/images/Swordsman/Run/Run_0*.png", 0.16f, true, false);
                     lge.imageManager.LoadImages("ninja", resourceDir + "/images/Swordsman/Idle/Idle_000.png", 0.16f, false, false);
-                    lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
+                    //lge.fontManager.LoadSysFont("monospace", "Courier New", FontStyle.Regular, 10);
+                    lge.fontManager.LoadTTFont("monospace", resourceDir + "/fonts/FreeMono.ttf", FontStyle.Regular, 10);
+                    lge.soundManager.LoadSound("fondo", resourceDir + "/sounds/happy-and-sad.wav");
+                    lge.soundManager.LoadSound("aves", resourceDir + "/sounds/bird-thrush-nightingale.wav");
+                    lge.soundManager.LoadSound("poing", resourceDir + "/sounds/cartoon-poing.wav");
+
+                    // activamos la musica de fondo
+                    lge.soundManager.PlaySound("fondo", true);
 
                     // agregamos el fondo
                     Sprite fondo = new Sprite("fondo", new PointF(0, 0), "fondo");
@@ -78,6 +85,12 @@ namespace test
                     Canvas infobar = (Canvas)lge.GetGObject("infobar");
                     infobar.Fill(Color.FromArgb(0x10, 0x20, 0x20, 0x20));
                     infobar.DrawText(info, new PointF(40, 3), "monospace", Color.Black);
+
+                    // de manera aleatorio activamos sonido de aves
+                    Random rand = new Random();
+                    int n = rand.Next(1000);
+                    if (n < 3)
+                        lge.soundManager.PlaySound("aves", false);
                 }
 
                 // main loop
@@ -87,9 +100,10 @@ namespace test
                 }
 
                 // show time
-                public static void Main()
+                public static void Main(String[] args)
                 {
-                    Colliders game = new Colliders(@"/mnt/sda5/roberto/Projects/GitHub/CSLittleGameEngine/src/test/resources");
+                    String resourceDir = args[0];
+                    Colliders game = new Colliders(resourceDir);
                     game.Run(60);
                     Console.WriteLine("Eso es todo!!!");
                 }

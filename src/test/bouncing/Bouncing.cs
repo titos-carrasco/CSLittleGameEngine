@@ -10,7 +10,7 @@ namespace test
         public class Bouncing
         {
             private readonly LittleGameEngine lge;
-            private Canvas ground;
+            private readonly Canvas ground;
 
             public Bouncing()
             {

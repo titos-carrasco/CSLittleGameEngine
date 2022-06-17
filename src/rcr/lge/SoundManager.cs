@@ -1,25 +1,29 @@
 using System;
 using System.Collections.Generic;
-using System.Media;
+using System.IO;
 using System.Threading;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace rcr
 {
     namespace lge
     {
+        /// <summary>
+        /// Manejador de sonidos en memoria
+        /// </summary>
         public class SoundManager
         {
-            /// <summary>
-            /// Manejador de sonidos en memoria
-            /// </summary>
-            private readonly Dictionary<String, SoundPlayer> sounds;
+            private readonly Dictionary<String, Byte[]> sounds;
+            private readonly List<WaveOut> players;
 
             /// <summary>
             /// Construye un objeto manejador de sonidos en memoria
             /// </summary>
             public SoundManager()
             {
-                sounds = new Dictionary<String, SoundPlayer>();
+                sounds = new Dictionary<String, Byte[]>();
+                players = new List<WaveOut>();
             }
 
             /// <summary>
@@ -29,12 +33,9 @@ namespace rcr
             /// <param name="fname">Nombre del archivo que contiene el sonido</param>
             public void LoadSound(String name, String fname)
             {
-                fname = LittleGameEngine.FixDirectorySeparatorChar(fname);
-                SoundPlayer soundPlayer = new SoundPlayer(fname);
-                soundPlayer.Load();
-                while (!soundPlayer.IsLoadCompleted)
-                    Thread.Sleep(1);
-                sounds.Add(name, soundPlayer);
+                fname = fname.Replace('\\', '/');
+                byte[] wav = File.ReadAllBytes(fname);
+                sounds.Add(name, wav);
             }
 
             /// <summary>
@@ -42,48 +43,55 @@ namespace rcr
             /// </summary>
             /// <param name="name">Nombre del sonido (previamente cargado) a reproducir</param>
             /// <param name="loop">Verdadero para reproducirlo en loop</param>
-            /// <param name="level">Volumen 0.0 a 1.0</param>
-            public void PlaySound(String name, bool loop, int level)
+            /// <returns>El ID del player del sonido a reproducir</returns>
+            public Object PlaySound(String name, bool loop)
             {
-                if (level < 0) level = 1;
-                else if (level > 100) level = 100;
-
-                if (loop)
-                    sounds[name].PlayLooping();
-                else
-                    sounds[name].Play();
+                Byte[] wav = sounds[name];
+                MemoryStream ms = new MemoryStream(wav);
+                IWaveProvider provider = new RawSourceWaveStream(ms, new WaveFormat());
+                var waveOut = new WaveOut();
+                waveOut.Init(provider);
+                waveOut.Play();
+                if(loop)
+                    waveOut.PlaybackStopped += (object sender, StoppedEventArgs e) => { ms.Position = 0; waveOut.Play(); };
+                lock (players)
+                {
+                    players.Add(waveOut);
+                }
+                return waveOut;
             }
 
             /// <summary>
             /// Detiene la reproduccion del sonido especificado
             /// </summary>
-            /// <param name="name">El nombre del sonido a detener</param>
-            public void StopSound(String name)
+            /// <param name="player">El ID del player del sonido a detener</param>
+            public void StopSound(Object player)
             {
-                sounds[name].Stop();
+                WaveOut waveOut = (WaveOut)player;
+                lock (players)
+                {
+                    waveOut.Stop();
+                    players.Remove(waveOut);
+                }
             }
 
             /// <summary>
-            /// Establece el volumen de un sonido (no implementada)
+            /// Detiene la reproduccion de todos los sonidos
             /// </summary>
-            /// <param name="name">Nombre del sonido</param>
-            /// <param name="level">Volumen 0.0 a 1.0</param>
-            public void SetSoundVolume(String name, int level)
+            public void StopAll()
             {
-                if (level < 0) level = 1;
-                else if (level > 100) level = 100;
-            }
+                WaveOut[] _players;
+                lock (players)
+                {
+                    _players = players.ToArray();
+                }
 
-            /// <summary>
-            /// Obtiene el volumen de un sonido (no implementada)
-            /// </summary>
-            /// <param name="name">Nombre del sonido</param>
-            /// <returns>Volumen del sonido 0.0 a 1.0</returns>
-            public int GetSoundVolume(String name)
-            {
-                return 100;
+                foreach (WaveOut p in _players)
+                {
+                    p.Stop();
+                    players.Remove(p);
+                }
             }
-
         }
     }
 }
