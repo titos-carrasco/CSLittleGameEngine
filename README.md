@@ -9,4 +9,4 @@ Un pequeño motor de juegos para aprender C#
 ## Pendientes
 
 - Problemas con TTF en Linux/Mono/Debian/Bullseye
-- Probar NAudio
+- Probar NAudio en Linux

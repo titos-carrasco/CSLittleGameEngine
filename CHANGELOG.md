@@ -6,6 +6,10 @@
 - Habilita sonidos en demos
 - Mueve especificación de directorio de recursos como parámentro en la línea de comando
 
+## v0.6.1 2022-06-11
+
+- Reemplaza todos los build.sh por Makefile
+
 ## 2022-06-10
 
 - Mueve TimeBeginPeriod() y TimeEndPeriod() al inicio y fin de la tarea TRun()
@@ -13,7 +17,7 @@
 - Pruebas OK en Windows: Sonidos, TTF y y flipping funciona bien
 - Corrige problema en Linux/Mono al realizar flipping. Las imágenes que fueron escaladas deben ser copiadas previamente a un bitmap con format Format32bppPArgb para que el flipping resulte bien
 - Pendientes Linux:
-  - Problemas con TTF en Linux/Mono no existen en VM debian bullseye
+  - Problemas con TTF en Linux/Mono no existen en VM debian bullseye, pero si en bookworm/
   - Sonidos cortos no se reproducen
   - No cierra bien a veces con sonido habilitado
 
