@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
 
 namespace rcr
 {
@@ -14,16 +11,19 @@ namespace rcr
         /// </summary>
         public class SoundManager
         {
+            private readonly bool isWindows;
             private readonly Dictionary<String, Byte[]> sounds;
-            private readonly List<WaveOut> players;
+            private readonly List<Object> players;
 
             /// <summary>
             /// Construye un objeto manejador de sonidos en memoria
             /// </summary>
             public SoundManager()
             {
+                isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
+
                 sounds = new Dictionary<String, Byte[]>();
-                players = new List<WaveOut>();
+                players = new List<Object>();
             }
 
             /// <summary>
@@ -48,17 +48,23 @@ namespace rcr
             {
                 Byte[] wav = sounds[name];
                 MemoryStream ms = new MemoryStream(wav);
-                IWaveProvider provider = new RawSourceWaveStream(ms, new WaveFormat());
-                var waveOut = new WaveOut();
-                waveOut.Init(provider);
-                waveOut.Play();
-                if(loop)
-                    waveOut.PlaybackStopped += (object sender, StoppedEventArgs e) => { ms.Position = 0; waveOut.Play(); };
-                lock (players)
+
+                if (isWindows)
                 {
-                    players.Add(waveOut);
+                    NAudio.Wave.IWaveProvider provider = new NAudio.Wave.RawSourceWaveStream(ms, new NAudio.Wave.WaveFormat());
+                    var waveOut = new NAudio.Wave.WaveOut();
+                    waveOut.Init(provider);
+                    waveOut.Play();
+                    if (loop)
+                        waveOut.PlaybackStopped += (object sender, NAudio.Wave.StoppedEventArgs e) => { ms.Position = 0; waveOut.Play(); };
+                    lock (players)
+                    {
+                        players.Add(waveOut);
+                    }
+                    return waveOut;
                 }
-                return waveOut;
+                else
+                    return null;
             }
 
             /// <summary>
@@ -67,11 +73,14 @@ namespace rcr
             /// <param name="player">El ID del player del sonido a detener</param>
             public void StopSound(Object player)
             {
-                WaveOut waveOut = (WaveOut)player;
-                lock (players)
+                if (isWindows)
                 {
-                    waveOut.Stop();
-                    players.Remove(waveOut);
+                    NAudio.Wave.WaveOut waveOut = (NAudio.Wave.WaveOut)player;
+                    lock (players)
+                    {
+                        waveOut.Stop();
+                        players.Remove(waveOut);
+                    }
                 }
             }
 
@@ -80,16 +89,19 @@ namespace rcr
             /// </summary>
             public void StopAll()
             {
-                WaveOut[] _players;
-                lock (players)
+                if (isWindows)
                 {
-                    _players = players.ToArray();
-                }
+                    Object[] _players;
+                    lock (players)
+                    {
+                        _players = players.ToArray();
+                    }
 
-                foreach (WaveOut p in _players)
-                {
-                    p.Stop();
-                    players.Remove(p);
+                    foreach (NAudio.Wave.WaveOut p in _players)
+                    {
+                        p.Stop();
+                        players.Remove(p);
+                    }
                 }
             }
         }
