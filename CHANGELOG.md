@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.1 2022-06-23
+
+- Agrega compilación condicional en SoundManager
+
 ## v0.7.0 2022-06-23
 
 - Los sonidos están disponibles sólo en Windows a través de NAudio
