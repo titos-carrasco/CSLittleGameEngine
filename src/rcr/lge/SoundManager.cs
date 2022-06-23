@@ -11,7 +11,6 @@ namespace rcr
         /// </summary>
         public class SoundManager
         {
-            private readonly bool isWindows;
             private readonly Dictionary<String, Byte[]> waves;
             private readonly List<Object> players;
 
@@ -20,8 +19,6 @@ namespace rcr
             /// </summary>
             public SoundManager()
             {
-                isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
-
                 waves = new Dictionary<String, Byte[]>();
                 players = new List<Object>();
             }
@@ -50,26 +47,25 @@ namespace rcr
                 if (level < 0) level = 0;
                 else if (level > 100) level = 100;
 
+                #if LINUX
+                return null;
+                #else
                 Byte[] wav = waves[name];
                 MemoryStream ms = new MemoryStream(wav);
 
-                if (isWindows)
+                NAudio.Wave.IWaveProvider provider = new NAudio.Wave.RawSourceWaveStream(ms, new NAudio.Wave.WaveFormat());
+                var waveOut = new NAudio.Wave.WaveOut();
+                waveOut.Init(provider);
+                waveOut.Volume = level / 100.0f;
+                waveOut.Play();
+                if (loop)
+                    waveOut.PlaybackStopped += (object sender, NAudio.Wave.StoppedEventArgs e) => { ms.Position = 0; waveOut.Play(); };
+                lock (players)
                 {
-                    NAudio.Wave.IWaveProvider provider = new NAudio.Wave.RawSourceWaveStream(ms, new NAudio.Wave.WaveFormat());
-                    var waveOut = new NAudio.Wave.WaveOut();
-                    waveOut.Init(provider);
-                    waveOut.Volume = level / 100.0f;
-                    waveOut.Play();
-                    if (loop)
-                        waveOut.PlaybackStopped += (object sender, NAudio.Wave.StoppedEventArgs e) => { ms.Position = 0; waveOut.Play(); };
-                    lock (players)
-                    {
-                        players.Add(waveOut);
-                    }
-                    return waveOut;
+                    players.Add(waveOut);
                 }
-                else
-                    return null;
+                return waveOut;
+                #endif
             }
 
             /// <summary>
@@ -78,15 +74,15 @@ namespace rcr
             /// <param name="player">El ID del player del sonido a detener</param>
             public void StopSound(Object player)
             {
-                if (isWindows)
+                #if LINUX
+                #else
+                NAudio.Wave.WaveOut waveOut = (NAudio.Wave.WaveOut)player;
+                lock (players)
                 {
-                    NAudio.Wave.WaveOut waveOut = (NAudio.Wave.WaveOut)player;
-                    lock (players)
-                    {
-                        waveOut.Stop();
-                        players.Remove(waveOut);
-                    }
+                    waveOut.Stop();
+                    players.Remove(waveOut);
                 }
+                #endif
             }
 
             /// <summary>
@@ -99,11 +95,11 @@ namespace rcr
                 if (level < 0) level = 0;
                 else if (level > 100) level = 100;
 
-                if (isWindows)
-                {
-                    NAudio.Wave.WaveOut waveOut = (NAudio.Wave.WaveOut)player;
-                    waveOut.Volume = level / 100.0f;
-                }
+                #if LINUX
+                #else
+                NAudio.Wave.WaveOut waveOut = (NAudio.Wave.WaveOut)player;
+                waveOut.Volume = level / 100.0f;
+                #endif
             }
 
             /// <summary>
@@ -113,13 +109,12 @@ namespace rcr
             /// <returns>El nivel de sonido (0-100)</returns>
             public int GetSoundVolume(Object player)
             {
-                if (isWindows)
-                {
-                    NAudio.Wave.WaveOut waveOut = (NAudio.Wave.WaveOut)player;
-                    return (int) waveOut.Volume * 100;
-
-                }
-                else return 0;
+                #if LINUX
+                return 0;
+                #else
+                NAudio.Wave.WaveOut waveOut = (NAudio.Wave.WaveOut)player;
+                return (int) waveOut.Volume * 100;
+                #endif
             }
 
             /// <summary>
@@ -127,20 +122,20 @@ namespace rcr
             /// </summary>
             public void StopAll()
             {
-                if (isWindows)
+                #if LINUX
+                #else
+                Object[] _players;
+                lock (players)
                 {
-                    Object[] _players;
-                    lock (players)
-                    {
-                        _players = players.ToArray();
-                    }
-
-                    foreach (NAudio.Wave.WaveOut p in _players)
-                    {
-                        p.Stop();
-                        players.Remove(p);
-                    }
+                    _players = players.ToArray();
                 }
+
+                foreach (NAudio.Wave.WaveOut p in _players)
+                {
+                    p.Stop();
+                    players.Remove(p);
+                }
+                #endif
             }
         }
     }
