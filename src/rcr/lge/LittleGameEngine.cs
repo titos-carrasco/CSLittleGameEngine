@@ -542,6 +542,35 @@ namespace rcr
                 return gobjs.ToArray();
             }
 
+            /// <summary>
+            /// Obtiene todos los GameObjects de una capa dada que contienen un punto especificado
+            /// </summary>
+            /// <param name="layer">La capa a revisar</param>
+            /// <param name="x">La coordenada X del punto a revisar</param>
+            /// <param name="y">La coordenada Y del punto a revisar</param>
+            /// <returns>Los GameObjects que contienen al punto</returns>
+            public GameObject[] Contains(int layer, float x, float y)
+            {
+                return Contains(layer, new PointF(x,y));
+            }
+
+            /// <summary>
+            /// Obtiene todos los GameObjects de una capa dada que contienen un punto especificado
+            /// </summary>
+            /// <param name="layer">La capa a revisar</param>
+            /// <param name="position">El punto a revisar</param>
+            /// <returns>Los GameObjects que contienen al punto</returns>
+            public GameObject[] Contains(int layer, PointF position)
+            {
+                List<GameObject> gobjs = new List<GameObject>();
+
+                foreach (GameObject o in gLayers[layer])
+                    if (o.rect.Contains(position))
+                        gobjs.Add(o);
+
+                return gobjs.ToArray();
+            }
+
             // ------ camera ------
 
             /// <summary>

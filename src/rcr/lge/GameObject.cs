@@ -167,7 +167,7 @@ namespace rcr
 
                 for (int i = 0; i < l; i++)
                 {
-                    RectangleF r = collider[i];
+                    RectangleF r = new RectangleF(collider[i].Location, collider[i].Size);
                     r.X += rect.X;
                     r.Y += rect.Y;
                     rects[i] = r;

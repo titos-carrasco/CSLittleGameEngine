@@ -12,7 +12,7 @@ namespace rcr
         public class SoundManager
         {
             private readonly bool isWindows;
-            private readonly Dictionary<String, Byte[]> sounds;
+            private readonly Dictionary<String, Byte[]> waves;
             private readonly List<Object> players;
 
             /// <summary>
@@ -22,7 +22,7 @@ namespace rcr
             {
                 isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
 
-                sounds = new Dictionary<String, Byte[]>();
+                waves = new Dictionary<String, Byte[]>();
                 players = new List<Object>();
             }
 
@@ -35,7 +35,7 @@ namespace rcr
             {
                 fname = fname.Replace('\\', '/');
                 byte[] wav = File.ReadAllBytes(fname);
-                sounds.Add(name, wav);
+                waves.Add(name, wav);
             }
 
             /// <summary>
@@ -43,10 +43,14 @@ namespace rcr
             /// </summary>
             /// <param name="name">Nombre del sonido (previamente cargado) a reproducir</param>
             /// <param name="loop">Verdadero para reproducirlo en loop</param>
+            /// <param name="level">El nivel de volumen (0-100)</param>
             /// <returns>El ID del player del sonido a reproducir</returns>
-            public Object PlaySound(String name, bool loop)
+            public Object PlaySound(String name, bool loop, int level=50)
             {
-                Byte[] wav = sounds[name];
+                if (level < 0) level = 0;
+                else if (level > 100) level = 100;
+
+                Byte[] wav = waves[name];
                 MemoryStream ms = new MemoryStream(wav);
 
                 if (isWindows)
@@ -54,6 +58,7 @@ namespace rcr
                     NAudio.Wave.IWaveProvider provider = new NAudio.Wave.RawSourceWaveStream(ms, new NAudio.Wave.WaveFormat());
                     var waveOut = new NAudio.Wave.WaveOut();
                     waveOut.Init(provider);
+                    waveOut.Volume = level / 100.0f;
                     waveOut.Play();
                     if (loop)
                         waveOut.PlaybackStopped += (object sender, NAudio.Wave.StoppedEventArgs e) => { ms.Position = 0; waveOut.Play(); };
@@ -82,6 +87,39 @@ namespace rcr
                         players.Remove(waveOut);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Establece el volumen de un sonido previamente cargado
+            /// </summary>
+            /// <param name="player">El ID del player del sonido</param>
+            /// <param name="level">El nivel de sonido (0-100)</param>
+            public void SetSoundVolume(Object player, int level)
+            {
+                if (level < 0) level = 0;
+                else if (level > 100) level = 100;
+
+                if (isWindows)
+                {
+                    NAudio.Wave.WaveOut waveOut = (NAudio.Wave.WaveOut)player;
+                    waveOut.Volume = level / 100.0f;
+                }
+            }
+
+            /// <summary>
+            /// Obtiene el volumen de un sonido previamente cargad
+            /// </summary>
+            /// <param name="player">El ID del player del sonid</param>
+            /// <returns>El nivel de sonido (0-100)</returns>
+            public int GetSoundVolume(Object player)
+            {
+                if (isWindows)
+                {
+                    NAudio.Wave.WaveOut waveOut = (NAudio.Wave.WaveOut)player;
+                    return (int) waveOut.Volume * 100;
+
+                }
+                else return 0;
             }
 
             /// <summary>
